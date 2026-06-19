@@ -38,30 +38,31 @@
                             <td class="py-4 text-center">
                                 <span class="px-2.5 py-1 rounded-full text-xs font-semibold 
                                     @if($ord->status === 'pending') bg-amber-500/10 text-amber-500
-                                    @elseif($ord->status === 'processing') bg-sky-500/10 text-sky-500
+                                    @elseif(in_array($ord->status, ['process', 'processing'])) bg-sky-500/10 text-sky-500
+                                    @elseif($ord->status === 'waiting') bg-purple-500/10 text-purple-500
                                     @else bg-emerald-500/10 text-emerald-500 @endif">
-                                    {{ ucfirst($ord->status) }}
+                                    @if($ord->status === 'process' || $ord->status === 'processing')
+                                        Processing
+                                    @elseif($ord->status === 'delivered' || $ord->status === 'completed')
+                                        Delivered
+                                    @else
+                                        {{ ucfirst($ord->status) }}
+                                    @endif
                                 </span>
                             </td>
                             <td class="py-4 text-right">
-                                @if($ord->status !== 'completed')
-                                    <form action="{{ route('fnb.status', $ord->id) }}" method="POST" class="flex items-center justify-end space-x-2">
-                                        @csrf
-                                        <select name="status" class="px-2 py-1 bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg text-xs">
-                                            @if($ord->status === 'pending')
-                                                <option value="processing">Start Cooking</option>
-                                            @endif
-                                            @if(in_array($ord->status, ['pending', 'processing']))
-                                                <option value="completed">Mark Delivered</option>
-                                            @endif
-                                        </select>
-                                        <button type="submit" class="px-2 py-1 bg-slate-900 dark:bg-slate-700 text-white rounded-lg text-xs font-semibold hover:bg-slate-800">
-                                            Apply
-                                        </button>
-                                    </form>
-                                @else
-                                    <span class="text-xs text-slate-400">Delivered</span>
-                                @endif
+                                <form action="{{ route('fnb.status', $ord->id) }}" method="POST" class="flex items-center justify-end space-x-2">
+                                    @csrf
+                                    <select name="status" class="px-2 py-1 bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg text-xs">
+                                        <option value="pending" {{ in_array($ord->status, ['pending']) ? 'selected' : '' }}>Pending</option>
+                                        <option value="process" {{ in_array($ord->status, ['process', 'processing']) ? 'selected' : '' }}>Process</option>
+                                        <option value="waiting" {{ $ord->status === 'waiting' ? 'selected' : '' }}>Waiting</option>
+                                        <option value="delivered" {{ in_array($ord->status, ['delivered', 'completed']) ? 'selected' : '' }}>Delivered</option>
+                                    </select>
+                                    <button type="submit" class="px-2 py-1 bg-slate-900 dark:bg-slate-700 text-white rounded-lg text-xs font-semibold hover:bg-slate-800">
+                                        Apply
+                                    </button>
+                                </form>
                             </td>
                         </tr>
                     @empty

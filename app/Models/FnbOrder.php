@@ -17,6 +17,7 @@ class FnbOrder extends Model
         'order_date',
         'status', // pending, processing, completed
         'total_amount',
+        'payment_type',
     ];
 
     /**

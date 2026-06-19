@@ -53,11 +53,18 @@ class FnbController extends Controller
      */
     public function store(Request $request): RedirectResponse
     {
+        $items = array_filter($request->input('items', []), function ($item) {
+            return isset($item['qty']) && (int)$item['qty'] > 0;
+        });
+        $request->merge(['items' => $items]);
+
         $request->validate([
             'reservation_id' => 'required|exists:reservations,id',
             'items' => 'required|array|min:1',
             'items.*.menu_id' => 'required|exists:fnb_menus,id',
             'items.*.qty' => 'required|integer|min:1',
+            'payment_type' => 'required|in:on_the_spot,billed_to_room',
+            'payment_method' => 'required_if:payment_type,on_the_spot|in:Cash,Transfer Bank,QRIS,Credit Card',
         ]);
 
         $reservation = Reservation::findOrFail($request->reservation_id);
@@ -73,6 +80,7 @@ class FnbController extends Controller
                 'order_date' => Carbon::now(),
                 'status' => 'pending',
                 'total_amount' => 0.00,
+                'payment_type' => $request->payment_type,
             ]);
 
             $total = 0.00;
@@ -94,11 +102,34 @@ class FnbController extends Controller
 
             $order->update(['total_amount' => $total]);
 
+            // If on the spot, record a payment and an invoice immediately
+            if ($request->payment_type === 'on_the_spot') {
+                \App\Models\Payment::create([
+                    'reservation_id' => $reservation->id,
+                    'payment_date' => Carbon::now(),
+                    'payment_method' => $request->payment_method ?? 'Cash',
+                    'amount' => $total,
+                    'reference_number' => 'F&B On the Spot',
+                ]);
+
+                $invoiceCount = \App\Models\Invoice::count() + 1;
+                $invoiceNumber = 'INV-FNB-' . Carbon::now()->format('Ymd') . '-' . sprintf('%04d', $invoiceCount);
+
+                \App\Models\Invoice::create([
+                    'reservation_id' => $reservation->id,
+                    'invoice_number' => $invoiceNumber,
+                    'invoice_type' => 'addon_fnb',
+                    'subtotal' => $total,
+                    'tax' => 0, // Assuming tax is inclusive or handled differently
+                    'grand_total' => $total,
+                ]);
+            }
+
             ActivityLog::log(
                 Auth::id(),
                 'Front Office',
                 'F&B Order',
-                "Placed F&B room service order for room {$resRoom->room->room_number} (booking {$reservation->booking_number}). Total: Rp " . number_format($total)
+                "Placed F&B room service order for room {$resRoom->room->room_number} (booking {$reservation->booking_number}). Total: Rp " . number_format($total) . " ({$request->payment_type})"
             );
         });
 
@@ -111,7 +142,7 @@ class FnbController extends Controller
     public function updateStatus(Request $request, FnbOrder $fnbOrder): RedirectResponse
     {
         $request->validate([
-            'status' => 'required|in:pending,processing,completed',
+            'status' => 'required|in:pending,process,processing,waiting,delivered,completed',
         ]);
 
         $oldStatus = $fnbOrder->status;
@@ -125,5 +156,68 @@ class FnbController extends Controller
         );
 
         return back()->with('success', 'Order status updated.');
+    }
+
+    /**
+     * Display F&B specific reports.
+     */
+    public function reports(Request $request): View
+    {
+        $startDate = $request->filled('start_date') ? Carbon::parse($request->start_date) : Carbon::today()->startOfMonth();
+        $endDate = $request->filled('end_date') ? Carbon::parse($request->end_date) : Carbon::today()->endOfMonth();
+
+        // Ensure date search covers full end date day
+        $endDateForQuery = $endDate->copy()->endOfDay();
+
+        // 1. Order status metrics
+        $statusCounts = FnbOrder::whereBetween('order_date', [$startDate, $endDateForQuery])
+            ->select('status', DB::raw('COUNT(*) as count'), DB::raw('SUM(total_amount) as total'))
+            ->groupBy('status')
+            ->get()
+            ->keyBy('status');
+
+        // Total orders in range
+        $totalOrders = FnbOrder::whereBetween('order_date', [$startDate, $endDateForQuery])->count();
+
+        // Total revenue (delivered or completed status)
+        $revenue = FnbOrder::whereBetween('order_date', [$startDate, $endDateForQuery])
+            ->whereIn('status', ['delivered', 'completed'])
+            ->sum('total_amount');
+
+        // Average order value
+        $avgOrderValue = $totalOrders > 0 ? $revenue / $totalOrders : 0;
+
+        // 2. Popular menu items in date range
+        $popularMenus = DB::table('fnb_order_details')
+            ->join('fnb_orders', 'fnb_order_details.order_id', '=', 'fnb_orders.id')
+            ->join('fnb_menus', 'fnb_order_details.menu_id', '=', 'fnb_menus.id')
+            ->join('fnb_categories', 'fnb_menus.category_id', '=', 'fnb_categories.id')
+            ->whereBetween('fnb_orders.order_date', [$startDate, $endDateForQuery])
+            ->select(
+                'fnb_menus.name as menu_name',
+                'fnb_categories.name as category_name',
+                DB::raw('SUM(fnb_order_details.qty) as total_qty'),
+                DB::raw('SUM(fnb_order_details.subtotal) as total_revenue')
+            )
+            ->groupBy('fnb_menus.id', 'fnb_menus.name', 'fnb_categories.name')
+            ->orderBy('total_qty', 'desc')
+            ->get();
+
+        // 3. Detailed order list in range
+        $orders = FnbOrder::with('reservation.guest', 'room', 'details.menu')
+            ->whereBetween('order_date', [$startDate, $endDateForQuery])
+            ->orderBy('order_date', 'desc')
+            ->paginate(15);
+
+        return view('fnb.reports', compact(
+            'startDate',
+            'endDate',
+            'statusCounts',
+            'totalOrders',
+            'revenue',
+            'avgOrderValue',
+            'popularMenus',
+            'orders'
+        ));
     }
 }

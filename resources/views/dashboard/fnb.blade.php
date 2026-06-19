@@ -40,9 +40,16 @@
                             </div>
                             <span class="px-2.5 py-1 rounded-full text-xs font-semibold 
                                 @if($order->status === 'pending') bg-amber-500/10 text-amber-500
-                                @elseif($order->status === 'processing') bg-sky-500/10 text-sky-500
+                                @elseif(in_array($order->status, ['process', 'processing'])) bg-sky-500/10 text-sky-500
+                                @elseif($order->status === 'waiting') bg-purple-500/10 text-purple-500
                                 @else bg-emerald-500/10 text-emerald-500 @endif">
-                                {{ ucfirst($order->status) }}
+                                @if($order->status === 'process' || $order->status === 'processing')
+                                    Processing
+                                @elseif($order->status === 'delivered' || $order->status === 'completed')
+                                    Delivered
+                                @else
+                                    {{ ucfirst($order->status) }}
+                                @endif
                             </span>
                         </div>
 
@@ -70,14 +77,19 @@
                     <form action="{{ route('fnb.status', $order->id) }}" method="POST" class="flex gap-2 border-t border-slate-200/50 dark:border-slate-700/50 pt-4 mt-2">
                         @csrf
                         @if($order->status === 'pending')
-                            <input type="hidden" name="status" value="processing">
+                            <input type="hidden" name="status" value="process">
                             <button type="submit" class="w-full py-2 bg-sky-500 hover:bg-sky-600 text-white text-xs font-semibold rounded-lg transition-colors">
                                 Start Cooking (Process)
                             </button>
-                        @elseif($order->status === 'processing')
-                            <input type="hidden" name="status" value="completed">
+                        @elseif(in_array($order->status, ['process', 'processing']))
+                            <input type="hidden" name="status" value="waiting">
+                            <button type="submit" class="w-full py-2 bg-purple-500 hover:bg-purple-600 text-white text-xs font-semibold rounded-lg transition-colors">
+                                Mark Ready (Waiting)
+                            </button>
+                        @elseif($order->status === 'waiting')
+                            <input type="hidden" name="status" value="delivered">
                             <button type="submit" class="w-full py-2 bg-emerald-500 hover:bg-emerald-600 text-white text-xs font-semibold rounded-lg transition-colors">
-                                Mark as Delivered (Complete)
+                                Mark Delivered (Deliver)
                             </button>
                         @endif
                     </form>

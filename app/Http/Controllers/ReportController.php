@@ -88,7 +88,7 @@ class ReportController extends Controller
 
         // 6. Summary Report
         $roomRevTotal = array_sum($roomTypeRevenues) + $extraBedRevenue;
-        $fnbRevTotal = FnbOrder::whereBetween('order_date', [$startDate, $endDate])->where('status', 'completed')->sum('total_amount');
+        $fnbRevTotal = FnbOrder::whereBetween('order_date', [$startDate, $endDate])->whereIn('status', ['completed', 'delivered'])->sum('total_amount');
         $laundryRevTotal = LaundryRequest::whereBetween('request_date', [$startDate, $endDate])->where('status', 'completed')->sum('total_amount');
         $additionalRevTotal = DB::table('additional_charges')
             ->join('reservations', 'additional_charges.reservation_id', '=', 'reservations.id')

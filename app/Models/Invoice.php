@@ -13,6 +13,7 @@ class Invoice extends Model
     protected $fillable = [
         'reservation_id',
         'invoice_number',
+        'invoice_type',
         'subtotal',
         'tax',
         'grand_total',

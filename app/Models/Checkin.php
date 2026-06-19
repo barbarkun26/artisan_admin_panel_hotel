@@ -14,6 +14,8 @@ class Checkin extends Model
         'reservation_id',
         'actual_checkin',
         'checked_in_by',
+        'guarantee_type',
+        'deposit_amount',
     ];
 
     /**

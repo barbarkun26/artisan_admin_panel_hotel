@@ -55,6 +55,8 @@ class LaundryController extends Controller
             'items.*.name' => 'required|string|max:255',
             'items.*.qty' => 'required|integer|min:1',
             'items.*.price' => 'required|numeric|min:0',
+            'payment_type' => 'required|in:on_the_spot,billed_to_room',
+            'payment_method' => 'required_if:payment_type,on_the_spot|in:Cash,Transfer Bank,QRIS,Credit Card',
         ]);
 
         $reservation = Reservation::findOrFail($request->reservation_id);
@@ -71,6 +73,7 @@ class LaundryController extends Controller
                 'request_date' => Carbon::now(),
                 'status' => 'pending',
                 'total_amount' => 0.00,
+                'payment_type' => $request->payment_type,
             ]);
 
             $total = 0.00;
@@ -88,11 +91,34 @@ class LaundryController extends Controller
 
             $laundryRequest->update(['total_amount' => $total]);
 
+            // If on the spot, record a payment and an invoice immediately
+            if ($request->payment_type === 'on_the_spot') {
+                \App\Models\Payment::create([
+                    'reservation_id' => $reservation->id,
+                    'payment_date' => Carbon::now(),
+                    'payment_method' => $request->payment_method ?? 'Cash',
+                    'amount' => $total,
+                    'reference_number' => 'Laundry On the Spot',
+                ]);
+
+                $invoiceCount = \App\Models\Invoice::count() + 1;
+                $invoiceNumber = 'INV-LND-' . Carbon::now()->format('Ymd') . '-' . sprintf('%04d', $invoiceCount);
+
+                \App\Models\Invoice::create([
+                    'reservation_id' => $reservation->id,
+                    'invoice_number' => $invoiceNumber,
+                    'invoice_type' => 'addon_laundry',
+                    'subtotal' => $total,
+                    'tax' => 0, // Assuming tax is inclusive
+                    'grand_total' => $total,
+                ]);
+            }
+
             ActivityLog::log(
                 Auth::id(),
                 'Front Office',
                 'Laundry Request',
-                "Created laundry request for room {$resRoom->room->room_number} (booking {$reservation->booking_number}). Total: Rp " . number_format($total)
+                "Created laundry request for room {$resRoom->room->room_number} (booking {$reservation->booking_number}). Total: Rp " . number_format($total) . " ({$request->payment_type})"
             );
         });
 

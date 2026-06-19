@@ -72,7 +72,7 @@
             </div>
 
             <div class="mt-6 flex gap-2">
-                @if($reservation->status === 'checkout' || $reservation->invoice)
+                @if($reservation->status === 'checkout' || $reservation->invoices->isNotEmpty())
                     <a href="{{ route('reservations.invoice', $reservation->id) }}" target="_blank"
                        class="w-full py-2 bg-slate-900 dark:bg-slate-700 text-white font-semibold text-xs rounded-xl text-center hover:bg-slate-800 transition-colors">
                         Print Invoice
@@ -92,13 +92,61 @@
         <h3 class="text-sm font-semibold text-slate-400 uppercase tracking-wider mb-4">Reservation Actions</h3>
         
         @if($reservation->status === 'pending')
-            <div class="flex flex-wrap gap-4">
-                <a href="{{ route('reservations.checkin', $reservation->id) }}"
-                   class="px-4 py-2 bg-emerald-500 hover:bg-emerald-600 text-slate-950 font-bold rounded-xl text-sm transition-colors">
-                    Check-in Guest
-                </a>
-                
-                <form action="{{ route('reservations.cancel', $reservation->id) }}" method="POST" class="inline">
+            <div class="flex flex-col gap-4">
+                <div class="flex flex-wrap gap-4">
+                    <details class="group">
+                        <summary class="inline-block px-4 py-2 bg-emerald-500 hover:bg-emerald-600 text-slate-950 font-bold rounded-xl text-sm transition-colors cursor-pointer list-none">
+                            Check-in Guest
+                        </summary>
+                        <div class="mt-4 bg-slate-50 dark:bg-slate-800/50 rounded-xl p-5 border border-slate-200 dark:border-slate-700 w-full max-w-2xl">
+                            <h4 class="font-bold text-sm mb-4">Process Check-in</h4>
+                            <form action="{{ route('reservations.checkin', $reservation->id) }}" method="POST" class="space-y-4">
+                                @csrf
+                                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                    <div>
+                                        <label class="block text-xs text-slate-500 dark:text-slate-400 mb-1 uppercase tracking-wider">Guarantee Type</label>
+                                        <select name="guarantee_type" required class="w-full px-3 py-2 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl text-sm">
+                                            <option value="ktp">Hold ID Card (KTP)</option>
+                                            <option value="deposit">Cash/Card Deposit</option>
+                                        </select>
+                                    </div>
+                                    <div>
+                                        <label class="block text-xs text-slate-500 dark:text-slate-400 mb-1 uppercase tracking-wider">Deposit Amount (Rp)</label>
+                                        <input type="number" name="deposit_amount" min="0" value="0" class="w-full px-3 py-2 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl text-sm">
+                                        <p class="text-[10px] text-slate-400 mt-1">If KTP, leave as 0.</p>
+                                    </div>
+                                </div>
+                                
+                                <div class="border-t border-slate-200 dark:border-slate-700 pt-4 mt-4">
+                                    <h5 class="text-xs font-semibold mb-2 text-slate-500 uppercase">Upfront Room Payment (Total: Rp {{ number_format($reservation->room_charges_total * 1.1) }} incl. 10% tax)</h5>
+                                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                        <div>
+                                            <label class="block text-xs text-slate-500 dark:text-slate-400 mb-1 uppercase tracking-wider">Payment Method</label>
+                                            <select name="payment_method" class="w-full px-3 py-2 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl text-sm">
+                                                <option value="">Pay Later / No Upfront Payment</option>
+                                                <option value="Cash">Cash</option>
+                                                <option value="Transfer Bank">Transfer Bank</option>
+                                                <option value="QRIS">QRIS</option>
+                                                <option value="Credit Card">Credit Card</option>
+                                            </select>
+                                        </div>
+                                        <div>
+                                            <label class="block text-xs text-slate-500 dark:text-slate-400 mb-1 uppercase tracking-wider">Amount Paid</label>
+                                            <input type="number" name="amount_paid" value="{{ $reservation->room_charges_total * 1.1 }}" class="w-full px-3 py-2 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl text-sm">
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="flex justify-end pt-2">
+                                    <button type="submit" class="px-5 py-2 bg-emerald-600 hover:bg-emerald-700 text-white font-bold rounded-xl text-sm transition-colors">
+                                        Confirm & Check-in
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
+                    </details>
+                    
+                    <form action="{{ route('reservations.cancel', $reservation->id) }}" method="POST" class="inline mt-1">
                     @csrf
                     <button type="submit" class="px-4 py-2 bg-red-500 hover:bg-red-600 text-white font-bold rounded-xl text-sm transition-colors">
                         Cancel Booking

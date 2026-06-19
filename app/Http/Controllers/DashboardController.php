@@ -31,7 +31,7 @@ class DashboardController extends Controller
             ->select(DB::raw('SUM(room_rate + (extra_bed_qty * extra_bed_price)) as total'))
             ->value('total') ?: 0;
             
-        $fnbRevenue = FnbOrder::where('status', 'completed')->sum('total_amount');
+        $fnbRevenue = FnbOrder::whereIn('status', ['completed', 'delivered'])->sum('total_amount');
         $laundryRevenue = LaundryRequest::where('status', 'completed')->sum('total_amount');
         $additionalCharges = DB::table('additional_charges')->sum('amount');
         
@@ -151,11 +151,11 @@ class DashboardController extends Controller
 
         $ordersToday = FnbOrder::whereDate('order_date', $today)->count();
         $revenueToday = FnbOrder::whereDate('order_date', $today)
-            ->where('status', 'completed')
+            ->whereIn('status', ['completed', 'delivered'])
             ->sum('total_amount');
             
         $pendingOrders = FnbOrder::with('reservation.guest', 'room', 'details.menu')
-            ->whereIn('status', ['pending', 'processing'])
+            ->whereIn('status', ['pending', 'process', 'processing', 'waiting'])
             ->orderBy('order_date', 'asc')
             ->get();
 

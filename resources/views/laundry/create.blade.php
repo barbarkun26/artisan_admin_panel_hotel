@@ -20,6 +20,32 @@
             </select>
         </div>
 
+        <!-- Payment Selection -->
+        <div>
+            <h3 class="text-sm font-semibold text-slate-400 uppercase tracking-wider mb-2">Payment Option</h3>
+            <div class="bg-slate-50 dark:bg-slate-800/50 rounded-xl p-4 border border-slate-200 dark:border-slate-700">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-xs text-slate-500 dark:text-slate-400 mb-1 uppercase tracking-wider">Payment Type</label>
+                        <select name="payment_type" required class="w-full px-3 py-2 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl text-sm">
+                            <option value="billed_to_room">Bill to Room (Pay at Checkout)</option>
+                            <option value="on_the_spot">Pay On The Spot (Direct Payment)</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-xs text-slate-500 dark:text-slate-400 mb-1 uppercase tracking-wider">Payment Method (If On The Spot)</label>
+                        <select name="payment_method" class="w-full px-3 py-2 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl text-sm">
+                            <option value="">-- Select Method --</option>
+                            <option value="Cash">Cash</option>
+                            <option value="Transfer Bank">Transfer Bank</option>
+                            <option value="QRIS">QRIS</option>
+                            <option value="Credit Card">Credit Card</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+        </div>
+
         <!-- Dynamic Items Table -->
         <div>
             <h3 class="text-sm font-semibold text-slate-400 uppercase tracking-wider mb-2">Laundry Items List</h3>

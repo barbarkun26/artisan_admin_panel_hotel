@@ -154,7 +154,7 @@ class ReservationController extends Controller
             'guest',
             'reservationRooms.room.roomType',
             'payments',
-            'invoice',
+            'invoices',
             'fnbOrders.details.menu',
             'laundryRequests.items',
             'additionalCharges',
@@ -167,20 +167,57 @@ class ReservationController extends Controller
     /**
      * Process actual Check-in.
      */
-    public function checkin(Reservation $reservation): RedirectResponse
+    public function checkin(Request $request, Reservation $reservation): RedirectResponse
     {
         if ($reservation->status !== 'pending') {
             return back()->with('error', 'Only pending reservations can be checked in.');
         }
 
-        DB::transaction(function () use ($reservation) {
+        $request->validate([
+            'guarantee_type' => 'required|in:deposit,ktp',
+            'deposit_amount' => 'nullable|numeric|min:0',
+            'payment_method' => 'nullable|in:Cash,Transfer Bank,QRIS,Credit Card',
+            'amount_paid' => 'nullable|numeric|min:0',
+        ]);
+
+        DB::transaction(function () use ($request, $reservation) {
             $reservation->update(['status' => 'checkin']);
 
             Checkin::create([
                 'reservation_id' => $reservation->id,
                 'actual_checkin' => Carbon::now(),
                 'checked_in_by' => Auth::id(),
+                'guarantee_type' => $request->guarantee_type,
+                'deposit_amount' => $request->deposit_amount ?? 0,
             ]);
+
+            // Create Upfront Room Invoice
+            $invoiceCount = \App\Models\Invoice::count() + 1;
+            $invoiceNumber = 'INV-' . Carbon::now()->format('Ymd') . '-' . sprintf('%04d', $invoiceCount);
+            
+            $subtotal = $reservation->room_charges_total;
+            $tax = $subtotal * 0.10; // 10% tax
+            $grandTotal = $subtotal + $tax;
+
+            \App\Models\Invoice::create([
+                'reservation_id' => $reservation->id,
+                'invoice_number' => $invoiceNumber,
+                'invoice_type' => 'room',
+                'subtotal' => $subtotal,
+                'tax' => $tax,
+                'grand_total' => $grandTotal,
+            ]);
+
+            // Process upfront payment if provided
+            if ($request->filled('payment_method') && $request->amount_paid > 0) {
+                \App\Models\Payment::create([
+                    'reservation_id' => $reservation->id,
+                    'payment_date' => Carbon::now(),
+                    'payment_method' => $request->payment_method,
+                    'amount' => $request->amount_paid,
+                    'reference_number' => 'Upfront Payment',
+                ]);
+            }
 
             // Update rooms status to Occupied (O)
             $occupiedStatus = DB::table('room_statuses')->where('code', 'O')->first();

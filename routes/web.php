@@ -47,7 +47,7 @@ Route::middleware(['auth'])->group(function () {
         
         // Reservations Management
         Route::resource('reservations', ReservationController::class);
-        Route::get('/reservations/{reservation}/checkin', [ReservationController::class, 'checkin'])->name('reservations.checkin');
+        Route::post('/reservations/{reservation}/checkin', [ReservationController::class, 'checkin'])->name('reservations.checkin');
         Route::post('/reservations/{reservation}/extend', [ReservationController::class, 'extend'])->name('reservations.extend');
         Route::post('/reservations/{reservation}/cancel', [ReservationController::class, 'cancel'])->name('reservations.cancel');
         
@@ -85,5 +85,6 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/fnb/dashboard', [DashboardController::class, 'fnbDashboard'])->name('fnb.dashboard');
         Route::get('/fnb', [FnbController::class, 'index'])->name('fnb.index');
         Route::post('/fnb/{fnbOrder}/status', [FnbController::class, 'updateStatus'])->name('fnb.status');
+        Route::get('/fnb/reports', [FnbController::class, 'reports'])->name('fnb.reports');
     });
 });

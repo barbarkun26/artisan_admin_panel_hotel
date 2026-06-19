@@ -99,13 +99,13 @@ class Reservation extends Model
     }
 
     /**
-     * Get invoice.
+     * Get invoices.
      *
-     * @return HasOne<Invoice, $this>
+     * @return HasMany<Invoice, $this>
      */
-    public function invoice(): HasOne
+    public function invoices(): HasMany
     {
-        return $this->hasOne(Invoice::class);
+        return $this->hasMany(Invoice::class);
     }
 
     /**

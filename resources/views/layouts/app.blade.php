@@ -120,6 +120,9 @@
                         <a href="{{ route('fnb.index') }}" class="flex items-center space-x-3 px-3 py-2 rounded-lg text-sm font-medium hover:bg-slate-100 dark:hover:bg-slate-800 {{ request()->routeIs('fnb.index') ? 'bg-amber-500/10 text-amber-500' : '' }}">
                             <span>F&B Orders</span>
                         </a>
+                        <a href="{{ route('fnb.reports') }}" class="flex items-center space-x-3 px-3 py-2 rounded-lg text-sm font-medium hover:bg-slate-100 dark:hover:bg-slate-800 {{ request()->routeIs('fnb.reports') ? 'bg-amber-500/10 text-amber-500' : '' }}">
+                            <span>Reports</span>
+                        </a>
                     @endif
                 @endauth
             </nav>

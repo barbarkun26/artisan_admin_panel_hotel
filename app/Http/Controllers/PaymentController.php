@@ -54,21 +54,29 @@ class PaymentController extends Controller
                     'checked_out_by' => Auth::id(),
                 ]);
 
-                // Create official Invoice
+                // Create Addon Invoice
                 $invoiceCount = Invoice::count() + 1;
-                $invoiceNumber = 'INV-' . Carbon::now()->format('Ymd') . '-' . sprintf('%04d', $invoiceCount);
+                $invoiceNumber = 'INV-ADD-' . Carbon::now()->format('Ymd') . '-' . sprintf('%04d', $invoiceCount);
                 
-                $subtotal = $reservation->grand_total;
-                $tax = $subtotal * 0.10; // 10% tax
-                $grandTotal = $subtotal + $tax;
+                $fnbBilled = $reservation->fnbOrders()->where('payment_type', 'billed_to_room')->sum('total_amount');
+                $laundryBilled = $reservation->laundryRequests()->where('payment_type', 'billed_to_room')->sum('total_amount');
+                $additional = $reservation->additionalCharges()->sum('amount');
+                
+                $subtotal = $fnbBilled + $laundryBilled + $additional;
+                
+                if ($subtotal > 0) {
+                    $tax = $subtotal * 0.10; // 10% tax
+                    $grandTotal = $subtotal + $tax;
 
-                Invoice::create([
-                    'reservation_id' => $reservation->id,
-                    'invoice_number' => $invoiceNumber,
-                    'subtotal' => $subtotal,
-                    'tax' => $tax,
-                    'grand_total' => $grandTotal,
-                ]);
+                    Invoice::create([
+                        'reservation_id' => $reservation->id,
+                        'invoice_number' => $invoiceNumber,
+                        'invoice_type' => 'combined_addons',
+                        'subtotal' => $subtotal,
+                        'tax' => $tax,
+                        'grand_total' => $grandTotal,
+                    ]);
+                }
 
                 // Change Room Status to VD (Vacant Dirty)
                 $vdStatus = RoomStatus::where('code', 'VD')->first();
@@ -102,7 +110,7 @@ class PaymentController extends Controller
     }
 
     /**
-     * View/Print Invoice.
+     * View/Print Invoices.
      */
     public function printInvoice(Reservation $reservation): View
     {
@@ -110,13 +118,15 @@ class PaymentController extends Controller
             'guest',
             'reservationRooms.room.roomType',
             'payments',
-            'invoice',
+            'invoices',
             'fnbOrders.details.menu',
             'laundryRequests.items',
             'additionalCharges'
         ]);
 
-        if (!$reservation->invoice) {
+        $invoices = $reservation->invoices;
+
+        if ($invoices->isEmpty()) {
             // Create temporary invoice values if not checked out yet (draft invoice)
             $subtotal = $reservation->grand_total;
             $tax = $subtotal * 0.10;
@@ -124,16 +134,15 @@ class PaymentController extends Controller
 
             $draftInvoice = (object)[
                 'invoice_number' => 'DRAFT-' . $reservation->booking_number,
+                'invoice_type' => 'combined',
                 'subtotal' => $subtotal,
                 'tax' => $tax,
                 'grand_total' => $grandTotal,
                 'created_at' => Carbon::now(),
             ];
-            $invoice = $draftInvoice;
-        } else {
-            $invoice = $reservation->invoice;
+            $invoices = collect([$draftInvoice]);
         }
 
-        return view('payments.invoice', compact('reservation', 'invoice'));
+        return view('payments.invoice', compact('reservation', 'invoices'));
     }
 }

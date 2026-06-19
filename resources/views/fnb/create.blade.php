@@ -20,6 +20,30 @@
             </select>
         </div>
 
+        <!-- Payment Selection -->
+        <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-6 shadow-sm">
+            <h3 class="text-sm font-semibold text-slate-400 uppercase tracking-wider mb-4">Payment Method</h3>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                    <label class="block text-xs text-slate-400 mb-1 uppercase tracking-wider">Payment Type</label>
+                    <select name="payment_type" required class="w-full px-4 py-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-sm focus:outline-none focus:border-amber-500">
+                        <option value="billed_to_room">Bill to Room (Pay at Checkout)</option>
+                        <option value="on_the_spot">Pay On The Spot (Direct Payment)</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-xs text-slate-400 mb-1 uppercase tracking-wider">Payment Method (if On The Spot)</label>
+                    <select name="payment_method" class="w-full px-4 py-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-sm focus:outline-none focus:border-amber-500">
+                        <option value="">-- Select Method --</option>
+                        <option value="Cash">Cash</option>
+                        <option value="Transfer Bank">Transfer Bank</option>
+                        <option value="QRIS">QRIS</option>
+                        <option value="Credit Card">Credit Card</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+
         <!-- Menu Catalog -->
         <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-6 shadow-sm">
             <h3 class="text-sm font-semibold text-slate-400 uppercase tracking-wider mb-6">Menu Catalog Selection</h3>
