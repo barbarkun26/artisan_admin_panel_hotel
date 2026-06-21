@@ -71,7 +71,7 @@
                 </div>
             </div>
 
-            <div class="mt-6 flex gap-2">
+            <div class="mt-6 flex flex-col gap-2">
                 @if($reservation->status === 'checkout' || $reservation->invoices->isNotEmpty())
                     <a href="{{ route('reservations.invoice', $reservation->id) }}" target="_blank"
                        class="w-full py-2 bg-slate-900 dark:bg-slate-700 text-white font-semibold text-xs rounded-xl text-center hover:bg-slate-800 transition-colors">
@@ -83,6 +83,10 @@
                         Draft Invoice
                     </a>
                 @endif
+                <a href="{{ route('reservations.registration-form', $reservation->id) }}" target="_blank"
+                   class="w-full py-2 bg-amber-500 hover:bg-amber-600 text-slate-950 font-bold text-xs rounded-xl text-center transition-colors shadow-sm">
+                    Print Registration Form
+                </a>
             </div>
         </div>
     </div>
@@ -171,59 +175,77 @@
                     </form>
                 </div>
 
-                <!-- Record Folio Payment -->
+                <!-- Checkout / Inspection Workflow -->
                 <div>
-                    <h4 class="font-bold text-sm mb-2">Post Payment / Settlement</h4>
-                    <form action="{{ route('reservations.checkout.process', $reservation->id) }}" method="POST" class="space-y-3">
-                        @csrf
-                        <div class="grid grid-cols-2 gap-3">
-                            <div>
-                                <label class="block text-xs text-slate-400 mb-1 uppercase tracking-wider">Method</label>
-                                <select name="payment_method" required class="w-full px-3 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-xs">
-                                    <option value="Cash">Cash</option>
-                                    <option value="Transfer Bank">Transfer Bank</option>
-                                    <option value="QRIS">QRIS</option>
-                                    <option value="Credit Card">Credit Card</option>
-                                </select>
+                    <h4 class="font-bold text-sm mb-2">Checkout & Settlement</h4>
+                    
+                    @if($reservation->inspection_status === 'none')
+                        <div class="p-4 bg-slate-50 dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700 space-y-3">
+                            <div class="p-3 bg-red-500/10 border border-red-500/20 text-red-600 dark:text-red-400 rounded-xl text-xs">
+                                <strong>Inspection Needed:</strong> You must request a room inspection from Housekeeping before proceeding to checkout.
+                            </div>
+                            <form action="{{ route('reservations.request-inspection', $reservation->id) }}" method="POST" class="flex justify-end">
+                                @csrf
+                                <button type="submit" class="px-4 py-2 bg-amber-500 hover:bg-amber-600 text-slate-950 font-bold rounded-xl text-xs">
+                                    Request HK Inspection
+                                </button>
+                            </form>
+                        </div>
+                    @elseif($reservation->inspection_status === 'requested')
+                        <div class="p-4 bg-slate-50 dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700 space-y-3">
+                            <div class="p-3 bg-amber-500/10 border border-amber-500/20 text-amber-600 dark:text-amber-400 rounded-xl text-xs">
+                                <strong>Inspection Requested:</strong> Waiting for Housekeeping to complete the inspection. Please refresh this page once done.
+                            </div>
+                            <div class="flex justify-end">
+                                <button type="button" disabled class="px-4 py-2 bg-slate-300 text-slate-500 font-bold rounded-xl text-xs cursor-not-allowed">
+                                    Waiting for HK...
+                                </button>
+                            </div>
+                        </div>
+                    @else
+                        <!-- Final Checkout Form -->
+                        <form action="{{ route('reservations.checkout.process', $reservation->id) }}" method="POST" class="space-y-3">
+                            @csrf
+                            <div class="grid grid-cols-2 gap-3">
+                                <div>
+                                    <label class="block text-xs text-slate-400 mb-1 uppercase tracking-wider">Method</label>
+                                    <select name="payment_method" required class="w-full px-3 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-xs">
+                                        <option value="Cash">Cash</option>
+                                        <option value="Transfer Bank">Transfer Bank</option>
+                                        <option value="QRIS">QRIS</option>
+                                        <option value="Credit Card">Credit Card</option>
+                                    </select>
+                                </div>
+                                <div>
+                                    <label class="block text-xs text-slate-400 mb-1 uppercase tracking-wider">Amount Paid (Rp)</label>
+                                    <input type="number" name="amount_paid" required min="0" step="1" value="{{ max(0, $reservation->balance_due) }}"
+                                           class="w-full px-3 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-xs">
+                                </div>
                             </div>
                             <div>
-                                <label class="block text-xs text-slate-400 mb-1 uppercase tracking-wider">Amount Paid (Rp)</label>
-                                <input type="number" name="amount_paid" required min="0" step="1" value="{{ $reservation->balance_due }}"
+                                <label class="block text-xs text-slate-400 mb-1 uppercase tracking-wider">Reference No (e.g. Bank Trf Code)</label>
+                                <input type="text" name="reference_number" placeholder="Optional"
                                        class="w-full px-3 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-xs">
                             </div>
-                        </div>
-                        <div>
-                            <label class="block text-xs text-slate-400 mb-1 uppercase tracking-wider">Reference No (e.g. Bank Trf Code)</label>
-                            <input type="text" name="reference_number" placeholder="Optional"
-                                   class="w-full px-3 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-xs">
-                        </div>
-                        
-                        <!-- Check if Housekeeping Room Inspection exists -->
-                        @if(count($reservation->inspections) == 0)
-                            <div class="p-3 bg-red-500/10 border border-red-500/20 text-red-600 dark:text-red-400 rounded-xl text-xs">
-                                <strong>Inspection Needed:</strong> Room check is required. Ask Housekeeping to submit the room inspection report.
-                            </div>
-                        @else
+                            
                             <div class="p-3 bg-emerald-500/10 border border-emerald-500/20 text-emerald-600 dark:text-emerald-400 rounded-xl text-xs space-y-1">
-                                <p><strong>Inspection Logged:</strong> Room is {{ $reservation->inspections->first()->room_condition }}.</p>
-                                @if($reservation->inspections->first()->additional_charge > 0)
-                                    <p>Damage charge of Rp {{ number_format($reservation->inspections->first()->additional_charge) }} was added to the folio.</p>
+                                <p><strong>Inspection Completed:</strong> Room is {{ count($reservation->inspections) > 0 ? $reservation->inspections->last()->room_condition : 'checked' }}.</p>
+                                @if(count($reservation->inspections) > 0 && $reservation->inspections->last()->additional_charge > 0)
+                                    <p>Damage charge of Rp {{ number_format($reservation->inspections->last()->additional_charge) }} was added to the folio.</p>
                                 @endif
                             </div>
-                        @endif
 
-                        <div class="flex justify-end">
-                            <button type="submit" class="px-4 py-2 bg-amber-500 hover:bg-amber-600 text-slate-950 font-bold rounded-xl text-xs">
-                                @if(count($reservation->inspections) > 0 && $reservation->balance_due > 0)
-                                    Record Payment & Finalize Checkout
-                                @elseif(count($reservation->inspections) > 0 && $reservation->balance_due <= 0)
-                                    Finalize Checkout
-                                @else
-                                    Record Payment Only
-                                @endif
-                            </button>
-                        </div>
-                    </form>
+                            <div class="flex justify-end">
+                                <button type="submit" class="px-4 py-2 bg-emerald-500 hover:bg-emerald-600 text-white font-bold rounded-xl text-xs">
+                                    @if($reservation->balance_due > 0)
+                                        Record Payment & Finalize Checkout
+                                    @else
+                                        Finalize Checkout
+                                    @endif
+                                </button>
+                            </div>
+                        </form>
+                    @endif
                 </div>
             </div>
         @else

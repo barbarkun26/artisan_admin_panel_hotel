@@ -42,12 +42,15 @@
     <div class="max-w-4xl mx-auto border border-slate-200 p-8 rounded-lg shadow-sm mb-8 page-break">
         <!-- Header -->
         <div class="flex justify-between items-start border-b border-slate-200 pb-6 mb-6">
-            <div>
-                <h1 class="text-2xl font-bold tracking-wider">ARTISAN HOTEL</h1>
-                <p class="text-xs text-slate-500 mt-1">
-                    Jl. Sudirman No. 123, Jakarta, Indonesia<br>
-                    Phone: (021) 555-0199 | Email: reservation@artisan.com
-                </p>
+            <div class="flex items-center gap-4">
+                <img src="{{ asset('images/PPKDJP.png') }}" alt="Logo" class="h-16 object-contain">
+                <div>
+                    <h1 class="text-2xl font-bold tracking-wider">ARTISAN HOTEL</h1>
+                    <p class="text-xs text-slate-500 mt-1">
+                        Jl. Sudirman No. 123, Jakarta, Indonesia<br>
+                        Phone: (021) 555-0199 | Email: reservation@artisan.com
+                    </p>
+                </div>
             </div>
             <div class="text-right">
                 <h2 class="text-xl font-bold text-slate-800 uppercase">

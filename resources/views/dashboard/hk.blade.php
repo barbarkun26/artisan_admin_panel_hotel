@@ -43,6 +43,45 @@
         </div>
     </div>
 
+    <!-- Urgent Checkout Inspections Panel -->
+    @if($urgentInspections->isNotEmpty())
+        <div class="bg-red-500/10 border border-red-500/20 rounded-2xl p-6 shadow-sm">
+            <div class="flex items-center gap-2 mb-4">
+                <span class="relative flex h-3 w-3">
+                  <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75"></span>
+                  <span class="relative inline-flex rounded-full h-3 w-3 bg-red-500"></span>
+                </span>
+                <h3 class="text-sm font-bold text-red-600 dark:text-red-400 uppercase tracking-wider">Urgent: Checkout Inspections Requested</h3>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                @foreach($urgentInspections as $res)
+                    <div class="bg-white dark:bg-slate-900 border border-red-200 dark:border-red-900/50 rounded-xl p-4 shadow-sm">
+                        <div class="flex justify-between items-start mb-2">
+                            <div>
+                                <p class="font-bold text-slate-900 dark:text-white">{{ $res->guest->name }}</p>
+                                <p class="text-xs text-slate-500 font-mono">{{ $res->booking_number }}</p>
+                            </div>
+                            <span class="text-xs font-bold text-red-500 bg-red-50 dark:bg-red-500/10 px-2 py-1 rounded">Waiting</span>
+                        </div>
+                        <div class="text-sm space-y-1 mb-4">
+                            @foreach($res->reservationRooms as $rRoom)
+                                <p>Room <strong>{{ $rRoom->room->room_number }}</strong> ({{ $rRoom->room->roomType->name }})</p>
+                            @endforeach
+                        </div>
+                        <div class="flex flex-col gap-2">
+                            @foreach($res->reservationRooms as $rRoom)
+                                <a href="{{ route('inspections.create', ['reservation' => $res->id, 'room' => $rRoom->room->id]) }}" 
+                                   class="w-full text-center py-2 bg-red-500 hover:bg-red-600 text-white font-bold rounded-lg text-xs transition-colors">
+                                    Inspect Room {{ $rRoom->room->room_number }}
+                                </a>
+                            @endforeach
+                        </div>
+                    </div>
+                @endforeach
+            </div>
+        </div>
+    @endif
+
     <!-- Rooms List & Cleaning Panel -->
     <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-6 shadow-sm">
         <h3 class="text-sm font-semibold text-slate-400 uppercase tracking-wider mb-4">Rooms Status & Cleaning Logs</h3>

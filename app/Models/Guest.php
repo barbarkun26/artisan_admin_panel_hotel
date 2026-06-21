@@ -18,6 +18,11 @@ class Guest extends Model
         'phone',
         'email',
         'address',
+        'profession',
+        'company',
+        'nationality',
+        'birth_date',
+        'member_card_no',
     ];
 
     /**

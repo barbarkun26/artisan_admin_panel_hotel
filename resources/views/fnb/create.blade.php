@@ -14,7 +14,7 @@
                 <option value="">-- Choose room --</option>
                 @foreach($reservations as $res)
                     @foreach($res->reservationRooms as $resRoom)
-                        <option value="{{ $res->id }}">Room {{ $resRoom->room->room_number }} (Guest: {{ $res->guest->name }} - Booking: {{ $res->booking_number }})</option>
+                        <option value="{{ $res->id }}" {{ (isset($selectedReservationId) && $selectedReservationId == $res->id) ? 'selected' : '' }}>Room {{ $resRoom->room->room_number }} (Guest: {{ $res->guest->name }} - Booking: {{ $res->booking_number }})</option>
                     @endforeach
                 @endforeach
             </select>
@@ -72,7 +72,6 @@
                                                class="w-full px-2 py-1 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg text-sm text-center focus:outline-none">
                                     </div>
                                 </div>
-                            @endphp
                             @endforeach
                         </div>
                     </div>

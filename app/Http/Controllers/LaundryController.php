@@ -3,8 +3,10 @@
 namespace App\Http\Controllers;
 
 use App\Models\ActivityLog;
+use App\Models\Invoice;
 use App\Models\LaundryItem;
 use App\Models\LaundryRequest;
+use App\Models\Payment;
 use App\Models\Reservation;
 use Carbon\Carbon;
 use Illuminate\Http\RedirectResponse;
@@ -62,7 +64,7 @@ class LaundryController extends Controller
         $reservation = Reservation::findOrFail($request->reservation_id);
         // Get the active room linked to this reservation
         $resRoom = $reservation->reservationRooms()->first();
-        if (!$resRoom) {
+        if (! $resRoom) {
             return back()->with('error', 'No room allocated to this reservation.');
         }
 
@@ -93,7 +95,7 @@ class LaundryController extends Controller
 
             // If on the spot, record a payment and an invoice immediately
             if ($request->payment_type === 'on_the_spot') {
-                \App\Models\Payment::create([
+                Payment::create([
                     'reservation_id' => $reservation->id,
                     'payment_date' => Carbon::now(),
                     'payment_method' => $request->payment_method ?? 'Cash',
@@ -101,10 +103,10 @@ class LaundryController extends Controller
                     'reference_number' => 'Laundry On the Spot',
                 ]);
 
-                $invoiceCount = \App\Models\Invoice::count() + 1;
-                $invoiceNumber = 'INV-LND-' . Carbon::now()->format('Ymd') . '-' . sprintf('%04d', $invoiceCount);
+                $invoiceCount = Invoice::count() + 1;
+                $invoiceNumber = 'INV-LND-'.Carbon::now()->format('Ymd').'-'.sprintf('%04d', $invoiceCount);
 
-                \App\Models\Invoice::create([
+                Invoice::create([
                     'reservation_id' => $reservation->id,
                     'invoice_number' => $invoiceNumber,
                     'invoice_type' => 'addon_laundry',
@@ -118,9 +120,13 @@ class LaundryController extends Controller
                 Auth::id(),
                 'Front Office',
                 'Laundry Request',
-                "Created laundry request for room {$resRoom->room->room_number} (booking {$reservation->booking_number}). Total: Rp " . number_format($total) . " ({$request->payment_type})"
+                "Created laundry request for room {$resRoom->room->room_number} (booking {$reservation->booking_number}). Total: Rp ".number_format($total)." ({$request->payment_type})"
             );
         });
+
+        if (Auth::user()->hasRole('Front Office')) {
+            return redirect()->route('fo.dashboard')->with('success', 'Laundry request created.');
+        }
 
         return redirect()->route('laundry.index')->with('success', 'Laundry request created.');
     }

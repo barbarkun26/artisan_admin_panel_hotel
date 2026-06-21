@@ -19,7 +19,7 @@
         <!-- Brand -->
         <div class="text-center mb-8">
             <h1 class="text-2xl font-bold tracking-wider text-white">
-                ARTISAN <span class="text-amber-400 font-normal">HOTEL</span>
+                ARTISAN <span class="text-red-400 font-normal">HOTEL</span>
             </h1>
             <p class="text-xs text-slate-400 mt-2 uppercase tracking-widest">Property Management System</p>
         </div>
@@ -35,24 +35,24 @@
             <div>
                 <label for="email" class="block text-sm font-medium text-slate-300 mb-2">Email Address</label>
                 <input type="email" name="email" id="email" required value="{{ old('email') }}"
-                       class="w-full px-4 py-3 bg-slate-800 border border-slate-700 rounded-xl text-white focus:outline-none focus:border-amber-400 focus:ring-1 focus:ring-amber-400 transition-colors">
+                       class="w-full px-4 py-3 bg-slate-800 border border-slate-700 rounded-xl text-white focus:outline-none focus:border-red-400 focus:ring-1 focus:ring-red-400 transition-colors">
             </div>
 
             <div>
                 <label for="password" class="block text-sm font-medium text-slate-300 mb-2">Password</label>
                 <input type="password" name="password" id="password" required
-                       class="w-full px-4 py-3 bg-slate-800 border border-slate-700 rounded-xl text-white focus:outline-none focus:border-amber-400 focus:ring-1 focus:ring-amber-400 transition-colors">
+                       class="w-full px-4 py-3 bg-slate-800 border border-slate-700 rounded-xl text-white focus:outline-none focus:border-red-400 focus:ring-1 focus:ring-red-400 transition-colors">
             </div>
 
             <div class="flex items-center justify-between">
                 <label class="flex items-center text-sm text-slate-400 cursor-pointer">
-                    <input type="checkbox" name="remember" class="mr-2 rounded bg-slate-800 border-slate-700 text-amber-500 focus:ring-amber-500 focus:ring-offset-slate-900">
+                    <input type="checkbox" name="remember" class="mr-2 rounded bg-slate-800 border-slate-700 text-red-500 focus:ring-red-500 focus:ring-offset-slate-900">
                     Remember Me
                 </label>
             </div>
 
             <button type="submit"
-                    class="w-full py-3 bg-amber-500 hover:bg-amber-600 text-slate-950 font-semibold rounded-xl shadow-lg shadow-amber-500/20 transition-all hover:-translate-y-0.5">
+                    class="w-full py-3 bg-white hover:bg-red-400 text-slate-950 font-semibold rounded-xl shadow-lg shadow-amber-500/20 transition-all hover:-translate-y-0.5">
                 Sign In to System
             </button>
         </form>

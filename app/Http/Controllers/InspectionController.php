@@ -24,7 +24,7 @@ class InspectionController extends Controller
         $inspections = RoomInspection::with('reservation.guest', 'room', 'inspector')
             ->orderBy('id', 'desc')
             ->paginate(15);
-            
+
         return view('inspections.index', compact('inspections'));
     }
 
@@ -69,10 +69,10 @@ class InspectionController extends Controller
             if ($chargeAmount > 0) {
                 $descriptionParts = [];
                 if ($request->filled('damages')) {
-                    $descriptionParts[] = "Damages: " . $request->damages;
+                    $descriptionParts[] = 'Damages: '.$request->damages;
                 }
                 if ($request->filled('missing_items')) {
-                    $descriptionParts[] = "Missing Items: " . $request->missing_items;
+                    $descriptionParts[] = 'Missing Items: '.$request->missing_items;
                 }
                 $description = implode('; ', $descriptionParts) ?: 'HK Inspection Additional Charge';
 
@@ -84,12 +84,15 @@ class InspectionController extends Controller
                 ]);
             }
 
+            // 3. Mark reservation inspection status as completed
+            $reservation->update(['inspection_status' => 'completed']);
+
             // Record log
             ActivityLog::log(
                 Auth::id(),
                 'Housekeeping',
                 'Inspection',
-                "Inspected room {$room->room_number} for booking {$reservation->booking_number}. Condition: {$request->room_condition}. Charge: Rp " . number_format($chargeAmount)
+                "Inspected room {$room->room_number} for booking {$reservation->booking_number}. Condition: {$request->room_condition}. Charge: Rp ".number_format($chargeAmount)
             );
         });
 

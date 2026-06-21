@@ -133,7 +133,7 @@
                 <tbody class="divide-y divide-slate-100 dark:divide-slate-800/80 text-sm">
                     @forelse($reservationsReport as $row)
                         <tr>
-                            <td class="py-3 font-medium">{{ Carbon::parse($row->date)->format('M d, Y') }}</td>
+                            <td class="py-3 font-medium">{{ \Carbon\Carbon::parse($row->date)->format('M d, Y') }}</td>
                             <td class="py-3 text-center font-bold text-amber-500">{{ $row->count }} Booking(s)</td>
                         </tr>
                     @empty

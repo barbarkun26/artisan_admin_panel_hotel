@@ -7,6 +7,8 @@ use App\Models\FnbCategory;
 use App\Models\FnbMenu;
 use App\Models\FnbOrder;
 use App\Models\FnbOrderDetail;
+use App\Models\Invoice;
+use App\Models\Payment;
 use App\Models\Reservation;
 use Carbon\Carbon;
 use Illuminate\Http\RedirectResponse;
@@ -44,8 +46,9 @@ class FnbController extends Controller
 
         $menus = FnbMenu::where('active', true)->with('category')->get();
         $categories = FnbCategory::all();
+        $selectedReservationId = request('reservation_id');
 
-        return view('fnb.create', compact('reservations', 'menus', 'categories'));
+        return view('fnb.create', compact('reservations', 'menus', 'categories', 'selectedReservationId'));
     }
 
     /**
@@ -54,7 +57,7 @@ class FnbController extends Controller
     public function store(Request $request): RedirectResponse
     {
         $items = array_filter($request->input('items', []), function ($item) {
-            return isset($item['qty']) && (int)$item['qty'] > 0;
+            return isset($item['qty']) && (int) $item['qty'] > 0;
         });
         $request->merge(['items' => $items]);
 
@@ -69,7 +72,7 @@ class FnbController extends Controller
 
         $reservation = Reservation::findOrFail($request->reservation_id);
         $resRoom = $reservation->reservationRooms()->first();
-        if (!$resRoom) {
+        if (! $resRoom) {
             return back()->with('error', 'No room allocated to this reservation.');
         }
 
@@ -85,8 +88,10 @@ class FnbController extends Controller
 
             $total = 0.00;
             foreach ($request->items as $item) {
-                if ($item['qty'] <= 0) continue;
-                
+                if ($item['qty'] <= 0) {
+                    continue;
+                }
+
                 $menu = FnbMenu::findOrFail($item['menu_id']);
                 $subtotal = $item['qty'] * $menu->price;
                 $total += $subtotal;
@@ -104,7 +109,7 @@ class FnbController extends Controller
 
             // If on the spot, record a payment and an invoice immediately
             if ($request->payment_type === 'on_the_spot') {
-                \App\Models\Payment::create([
+                Payment::create([
                     'reservation_id' => $reservation->id,
                     'payment_date' => Carbon::now(),
                     'payment_method' => $request->payment_method ?? 'Cash',
@@ -112,10 +117,10 @@ class FnbController extends Controller
                     'reference_number' => 'F&B On the Spot',
                 ]);
 
-                $invoiceCount = \App\Models\Invoice::count() + 1;
-                $invoiceNumber = 'INV-FNB-' . Carbon::now()->format('Ymd') . '-' . sprintf('%04d', $invoiceCount);
+                $invoiceCount = Invoice::count() + 1;
+                $invoiceNumber = 'INV-FNB-'.Carbon::now()->format('Ymd').'-'.sprintf('%04d', $invoiceCount);
 
-                \App\Models\Invoice::create([
+                Invoice::create([
                     'reservation_id' => $reservation->id,
                     'invoice_number' => $invoiceNumber,
                     'invoice_type' => 'addon_fnb',
@@ -129,9 +134,13 @@ class FnbController extends Controller
                 Auth::id(),
                 'Front Office',
                 'F&B Order',
-                "Placed F&B room service order for room {$resRoom->room->room_number} (booking {$reservation->booking_number}). Total: Rp " . number_format($total) . " ({$request->payment_type})"
+                "Placed F&B room service order for room {$resRoom->room->room_number} (booking {$reservation->booking_number}). Total: Rp ".number_format($total)." ({$request->payment_type})"
             );
         });
+
+        if (Auth::user()->hasRole('Front Office')) {
+            return redirect()->route('fo.dashboard')->with('success', 'Food & Beverage order created successfully.');
+        }
 
         return redirect()->route('fnb.index')->with('success', 'Food & Beverage order created successfully.');
     }

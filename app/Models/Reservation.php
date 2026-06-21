@@ -21,6 +21,7 @@ class Reservation extends Model
         'checkout_date',
         'total_guest',
         'status', // pending, checkin, checkout, cancelled, skipper
+        'inspection_status', // none, requested, completed
         'created_by',
     ];
 
@@ -150,21 +151,18 @@ class Reservation extends Model
 
     /**
      * Calculate nights stayed.
-     *
-     * @return int
      */
     public function getNightsCountAttribute(): int
     {
         $start = Carbon::parse($this->checkin_date);
         $end = Carbon::parse($this->checkout_date);
         $nights = $start->diffInDays($end);
+
         return $nights > 0 ? $nights : 1;
     }
 
     /**
      * Calculate total room charges (base rate + extra beds).
-     *
-     * @return float
      */
     public function getRoomChargesTotalAttribute(): float
     {
@@ -173,13 +171,12 @@ class Reservation extends Model
         foreach ($this->reservationRooms as $resRoom) {
             $total += ($resRoom->room_rate * $nights) + ($resRoom->extra_bed_qty * $resRoom->extra_bed_price * $nights);
         }
+
         return (float) $total;
     }
 
     /**
      * Calculate total F&B orders.
-     *
-     * @return float
      */
     public function getFnbChargesTotalAttribute(): float
     {
@@ -188,8 +185,6 @@ class Reservation extends Model
 
     /**
      * Calculate total laundry charges.
-     *
-     * @return float
      */
     public function getLaundryChargesTotalAttribute(): float
     {
@@ -198,8 +193,6 @@ class Reservation extends Model
 
     /**
      * Calculate total additional charges.
-     *
-     * @return float
      */
     public function getAdditionalChargesTotalAttribute(): float
     {
@@ -208,8 +201,6 @@ class Reservation extends Model
 
     /**
      * Calculate grand total of all charges.
-     *
-     * @return float
      */
     public function getGrandTotalAttribute(): float
     {
@@ -218,8 +209,6 @@ class Reservation extends Model
 
     /**
      * Calculate total payments received.
-     *
-     * @return float
      */
     public function getPaymentsTotalAttribute(): float
     {
@@ -228,8 +217,6 @@ class Reservation extends Model
 
     /**
      * Calculate balance due.
-     *
-     * @return float
      */
     public function getBalanceDueAttribute(): float
     {

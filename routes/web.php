@@ -19,7 +19,7 @@ Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 
 // Authenticated Routes
 Route::middleware(['auth'])->group(function () {
-    
+
     // Root Redirector based on User Role
     Route::get('/', function () {
         $user = Auth::user();
@@ -32,6 +32,7 @@ Route::middleware(['auth'])->group(function () {
         } elseif ($user->hasRole('Food & Beverage')) {
             return redirect('/fnb/dashboard');
         }
+
         return redirect('/login');
     });
 
@@ -44,19 +45,21 @@ Route::middleware(['auth'])->group(function () {
     // Front Office Routes (and Admin helper)
     Route::middleware(['role:Front Office|Administrator'])->group(function () {
         Route::get('/fo/dashboard', [DashboardController::class, 'foDashboard'])->name('fo.dashboard');
-        
+
         // Reservations Management
         Route::resource('reservations', ReservationController::class);
         Route::post('/reservations/{reservation}/checkin', [ReservationController::class, 'checkin'])->name('reservations.checkin');
         Route::post('/reservations/{reservation}/extend', [ReservationController::class, 'extend'])->name('reservations.extend');
         Route::post('/reservations/{reservation}/cancel', [ReservationController::class, 'cancel'])->name('reservations.cancel');
-        
+
         // Guests CRUD
         Route::resource('guests', GuestController::class);
-        
+
         // Billing & Settlements
         Route::post('/reservations/{reservation}/checkout', [PaymentController::class, 'checkout'])->name('reservations.checkout.process');
+        Route::post('/reservations/{reservation}/request-inspection', [ReservationController::class, 'requestInspection'])->name('reservations.request-inspection');
         Route::get('/reservations/{reservation}/invoice', [PaymentController::class, 'printInvoice'])->name('reservations.invoice');
+        Route::get('/reservations/{reservation}/registration-form', [ReservationController::class, 'printRegistrationForm'])->name('reservations.registration-form');
 
         // Creating service requests
         Route::get('/laundry/create', [LaundryController::class, 'create'])->name('laundry.create');
@@ -69,12 +72,12 @@ Route::middleware(['auth'])->group(function () {
     Route::middleware(['role:Housekeeping|Administrator'])->group(function () {
         Route::get('/hk/dashboard', [DashboardController::class, 'hkDashboard'])->name('hk.dashboard');
         Route::post('/rooms/{room}/status', [DashboardController::class, 'updateRoomStatus'])->name('rooms.status');
-        
+
         // Inspections
         Route::get('/reservations/{reservation}/rooms/{room}/inspect', [InspectionController::class, 'create'])->name('inspections.create');
         Route::post('/reservations/{reservation}/rooms/{room}/inspect', [InspectionController::class, 'store'])->name('inspections.store');
         Route::get('/inspections', [InspectionController::class, 'index'])->name('inspections.index');
-        
+
         // Laundry Management
         Route::get('/laundry', [LaundryController::class, 'index'])->name('laundry.index');
         Route::post('/laundry/{laundryRequest}/status', [LaundryController::class, 'updateStatus'])->name('laundry.status');

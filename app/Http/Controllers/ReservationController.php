@@ -4,8 +4,9 @@ namespace App\Http\Controllers;
 
 use App\Models\ActivityLog;
 use App\Models\Checkin;
-use App\Models\Checkout;
 use App\Models\Guest;
+use App\Models\Invoice;
+use App\Models\Payment;
 use App\Models\Reservation;
 use App\Models\ReservationRoom;
 use App\Models\Room;
@@ -27,12 +28,12 @@ class ReservationController extends Controller
 
         if ($request->filled('search')) {
             $search = $request->search;
-            $query->where(function($q) use ($search) {
+            $query->where(function ($q) use ($search) {
                 $q->where('booking_number', 'like', "%{$search}%")
-                  ->orWhereHas('guest', function($qGuest) use ($search) {
-                      $qGuest->where('name', 'like', "%{$search}%")
-                             ->orWhere('phone', 'like', "%{$search}%");
-                  });
+                    ->orWhereHas('guest', function ($qGuest) use ($search) {
+                        $qGuest->where('name', 'like', "%{$search}%")
+                            ->orWhere('phone', 'like', "%{$search}%");
+                    });
             });
         }
 
@@ -54,7 +55,7 @@ class ReservationController extends Controller
         $rooms = [];
         $checkin = $request->checkin ?? Carbon::today()->format('Y-m-d');
         $checkout = $request->checkout ?? Carbon::tomorrow()->format('Y-m-d');
-        
+
         // Find available rooms
         if ($request->filled(['checkin', 'checkout'])) {
             $bookedRoomIds = DB::table('reservation_rooms')
@@ -88,7 +89,7 @@ class ReservationController extends Controller
         ]);
 
         $room = Room::findOrFail($request->room_id);
-        
+
         // Verify room availability one more time to avoid race condition
         $isBooked = DB::table('reservation_rooms')
             ->join('reservations', 'reservation_rooms.reservation_id', '=', 'reservations.id')
@@ -158,10 +159,23 @@ class ReservationController extends Controller
             'fnbOrders.details.menu',
             'laundryRequests.items',
             'additionalCharges',
-            'inspections.inspector'
+            'inspections.inspector',
         ]);
 
         return view('reservations.show', compact('reservation'));
+    }
+
+    /**
+     * Print guest registration form (Folio).
+     */
+    public function printRegistrationForm(Reservation $reservation): View
+    {
+        $reservation->load([
+            'guest',
+            'reservationRooms.room.roomType',
+        ]);
+
+        return view('reservations.registration_form', compact('reservation'));
     }
 
     /**
@@ -192,14 +206,14 @@ class ReservationController extends Controller
             ]);
 
             // Create Upfront Room Invoice
-            $invoiceCount = \App\Models\Invoice::count() + 1;
-            $invoiceNumber = 'INV-' . Carbon::now()->format('Ymd') . '-' . sprintf('%04d', $invoiceCount);
-            
+            $invoiceCount = Invoice::count() + 1;
+            $invoiceNumber = 'INV-'.Carbon::now()->format('Ymd').'-'.sprintf('%04d', $invoiceCount);
+
             $subtotal = $reservation->room_charges_total;
             $tax = $subtotal * 0.10; // 10% tax
             $grandTotal = $subtotal + $tax;
 
-            \App\Models\Invoice::create([
+            Invoice::create([
                 'reservation_id' => $reservation->id,
                 'invoice_number' => $invoiceNumber,
                 'invoice_type' => 'room',
@@ -210,7 +224,7 @@ class ReservationController extends Controller
 
             // Process upfront payment if provided
             if ($request->filled('payment_method') && $request->amount_paid > 0) {
-                \App\Models\Payment::create([
+                Payment::create([
                     'reservation_id' => $reservation->id,
                     'payment_date' => Carbon::now(),
                     'payment_method' => $request->payment_method,
@@ -239,12 +253,33 @@ class ReservationController extends Controller
     }
 
     /**
+     * Request Housekeeping Inspection before Checkout.
+     */
+    public function requestInspection(Reservation $reservation): RedirectResponse
+    {
+        if ($reservation->status !== 'checkin') {
+            return back()->with('error', 'Only active reservations can request a checkout inspection.');
+        }
+
+        $reservation->update(['inspection_status' => 'requested']);
+
+        ActivityLog::log(
+            Auth::id(),
+            'Front Office',
+            'Request Inspection',
+            "Requested checkout inspection for reservation {$reservation->booking_number}."
+        );
+
+        return back()->with('success', 'Inspection requested. Please wait for Housekeeping to complete the inspection before finalizing checkout.');
+    }
+
+    /**
      * Extend Guest Stay.
      */
     public function extend(Request $request, Reservation $reservation): RedirectResponse
     {
         $request->validate([
-            'new_checkout_date' => 'required|date|after:' . $reservation->checkout_date->format('Y-m-d'),
+            'new_checkout_date' => 'required|date|after:'.$reservation->checkout_date->format('Y-m-d'),
         ]);
 
         // Verify room availability for the extension

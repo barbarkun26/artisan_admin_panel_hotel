@@ -16,8 +16,8 @@ class GuestController extends Controller
         if ($request->filled('search')) {
             $search = $request->search;
             $query->where('name', 'like', "%{$search}%")
-                  ->orWhere('phone', 'like', "%{$search}%")
-                  ->orWhere('guest_code', 'like', "%{$search}%");
+                ->orWhere('phone', 'like', "%{$search}%")
+                ->orWhere('guest_code', 'like', "%{$search}%");
         }
 
         $guests = $query->orderBy('name')->paginate(15);
@@ -39,15 +39,20 @@ class GuestController extends Controller
             'phone' => 'required|string|max:20',
             'email' => 'nullable|email|max:255',
             'address' => 'nullable|string',
+            'profession' => 'nullable|string|max:255',
+            'company' => 'nullable|string|max:255',
+            'nationality' => 'nullable|string|max:255',
+            'birth_date' => 'nullable|date',
+            'member_card_no' => 'nullable|string|max:50',
         ]);
 
         // Generate guest code: G-XXXXX
         $lastGuest = Guest::orderBy('id', 'desc')->first();
         $nextId = $lastGuest ? $lastGuest->id + 1 : 1;
-        $guestCode = 'G-' . sprintf('%05d', $nextId);
+        $guestCode = 'G-'.sprintf('%05d', $nextId);
 
         Guest::create(array_merge($request->all(), [
-            'guest_code' => $guestCode
+            'guest_code' => $guestCode,
         ]));
 
         return redirect()->route('guests.index')->with('success', 'Guest registered successfully.');
@@ -67,6 +72,11 @@ class GuestController extends Controller
             'phone' => 'required|string|max:20',
             'email' => 'nullable|email|max:255',
             'address' => 'nullable|string',
+            'profession' => 'nullable|string|max:255',
+            'company' => 'nullable|string|max:255',
+            'nationality' => 'nullable|string|max:255',
+            'birth_date' => 'nullable|date',
+            'member_card_no' => 'nullable|string|max:50',
         ]);
 
         $guest->update($request->all());
