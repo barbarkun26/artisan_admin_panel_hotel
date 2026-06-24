@@ -37,8 +37,8 @@
         <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-6 shadow-sm">
             <h3 class="text-xs font-semibold text-slate-400 uppercase tracking-wider">Active Laundry</h3>
             <p class="text-2xl font-bold text-slate-900 dark:text-white mt-2">{{ $pendingLaundryCount }} Requests</p>
-            <div class="mt-4 flex items-center text-xs text-amber-500">
-                <span><a href="{{ route('laundry.index') }}" class="underline hover:text-amber-600">Open Laundry List</a></span>
+            <div class="mt-4 flex items-center text-xs text-indigo-500">
+                <span><a href="{{ route('laundry.index') }}" class="underline hover:text-indigo-600">Open Laundry List</a></span>
             </div>
         </div>
     </div>
@@ -108,7 +108,7 @@
                                     @if(in_array($room->status->code, ['VD', 'OD'])) bg-red-500/10 text-red-500
                                     @elseif(in_array($room->status->code, ['VC', 'VCI'])) bg-emerald-500/10 text-emerald-500
                                     @elseif($room->status->code === 'O') bg-blue-500/10 text-blue-500
-                                    @else bg-amber-500/10 text-amber-500 @endif">
+                                    @else bg-indigo-500/10 text-indigo-500 @endif">
                                     {{ $room->status->code }} - {{ $room->status->name }}
                                 </span>
                             </td>
@@ -122,7 +122,7 @@
                                 @endphp
                                 @if($activeRes)
                                     <a href="{{ route('inspections.create', ['reservation' => $activeRes->id, 'room' => $room->id]) }}" 
-                                       class="inline-flex px-3 py-1 bg-amber-500 hover:bg-amber-600 text-slate-950 font-medium rounded-lg text-xs transition-colors">
+                                       class="inline-flex px-3 py-1 bg-indigo-500 hover:bg-indigo-600 text-slate-950 font-medium rounded-lg text-xs transition-colors">
                                         Inspect Room
                                     </a>
                                 @else
@@ -132,7 +132,7 @@
                             <td class="py-4">
                                 <form action="{{ route('rooms.status', $room->id) }}" method="POST" class="flex items-center space-x-2">
                                     @csrf
-                                    <select name="status_id" class="px-2 py-1 bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg text-xs focus:outline-none focus:border-amber-500">
+                                    <select name="status_id" class="px-2 py-1 bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg text-xs focus:outline-none focus:border-indigo-500">
                                         @foreach($allStatuses as $st)
                                             <option value="{{ $st->id }}" {{ $room->current_status_id == $st->id ? 'selected' : '' }}>
                                                 {{ $st->code }} ({{ $st->name }})

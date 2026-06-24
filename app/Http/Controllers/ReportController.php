@@ -34,8 +34,8 @@ class ReportController extends Controller
         // 2. Occupancy Report
         $totalRooms = Room::count();
         $rooms = Room::with('status')->get();
-        
-        $occupiedRooms = Room::whereHas('status', function($q) {
+
+        $occupiedRooms = Room::whereHas('status', function ($q) {
             $q->whereIn('code', ['O', 'OC', 'OD', 'Comp', 'HU']);
         })->count();
 
@@ -46,7 +46,7 @@ class ReportController extends Controller
 
         // 3. Housekeeping Report (Inspection & Laundry Count)
         $inspectionsCount = RoomInspection::whereBetween('inspection_date', [$startDate, $endDate])->count();
-        
+
         $laundryReport = LaundryRequest::whereBetween('request_date', [$startDate, $endDate])
             ->select('status', DB::raw('COUNT(*) as count'), DB::raw('SUM(total_amount) as total'))
             ->groupBy('status')
@@ -61,7 +61,7 @@ class ReportController extends Controller
         // 5. Room Type Revenues
         $roomTypes = RoomType::all();
         $roomTypeRevenues = [];
-        
+
         foreach ($roomTypes as $type) {
             $revenue = DB::table('reservation_rooms')
                 ->join('rooms', 'reservation_rooms.room_id', '=', 'rooms.id')
@@ -116,6 +116,90 @@ class ReportController extends Controller
             'laundryRevTotal',
             'additionalRevTotal',
             'totalRevenue'
+        ));
+    }
+
+    /**
+     * Display Front Office specific reports.
+     */
+    public function foReports(Request $request): View
+    {
+        $startDate = $request->filled('start_date') ? Carbon::parse($request->start_date) : Carbon::today()->startOfMonth();
+        $endDate = $request->filled('end_date') ? Carbon::parse($request->end_date) : Carbon::today()->endOfMonth();
+
+        // 1. Reservation Report (Daily Reservation Counts)
+        $reservationsReport = Reservation::whereBetween('reservation_date', [$startDate, $endDate])
+            ->select(DB::raw('DATE(reservation_date) as date'), DB::raw('COUNT(*) as count'))
+            ->groupBy('date')
+            ->orderBy('date')
+            ->get();
+
+        // 2. Occupancy Report
+        $totalRooms = Room::count();
+        $occupiedRooms = Room::whereHas('status', function ($q) {
+            $q->whereIn('code', ['O', 'OC', 'OD', 'Comp', 'HU']);
+        })->count();
+        $vacantRooms = $totalRooms - $occupiedRooms;
+        $occupancyRate = $totalRooms > 0 ? round(($occupiedRooms / $totalRooms) * 100) : 0;
+        $roomStatuses = RoomStatus::withCount('rooms')->get();
+
+        // 3. Room Type Revenues
+        $roomTypes = RoomType::all();
+        $roomTypeRevenues = [];
+
+        foreach ($roomTypes as $type) {
+            $revenue = DB::table('reservation_rooms')
+                ->join('rooms', 'reservation_rooms.room_id', '=', 'rooms.id')
+                ->join('reservations', 'reservation_rooms.reservation_id', '=', 'reservations.id')
+                ->where('rooms.room_type_id', $type->id)
+                ->where('reservations.status', '!=', 'cancelled')
+                ->whereBetween('reservations.checkin_date', [$startDate->format('Y-m-d'), $endDate->format('Y-m-d')])
+                ->select(DB::raw('SUM(room_rate * DATEDIFF(checkout_date, checkin_date)) as total'))
+                ->value('total') ?: 0.00;
+
+            $roomTypeRevenues[$type->name] = (float) $revenue;
+        }
+
+        return view('fo.reports', compact(
+            'startDate',
+            'endDate',
+            'reservationsReport',
+            'totalRooms',
+            'occupiedRooms',
+            'vacantRooms',
+            'occupancyRate',
+            'roomStatuses',
+            'roomTypeRevenues'
+        ));
+    }
+
+    /**
+     * Display Housekeeping specific reports.
+     */
+    public function hkReports(Request $request): View
+    {
+        $startDate = $request->filled('start_date') ? Carbon::parse($request->start_date) : Carbon::today()->startOfMonth();
+        $endDate = $request->filled('end_date') ? Carbon::parse($request->end_date) : Carbon::today()->endOfMonth();
+
+        // 1. Housekeeping Report (Inspection & Laundry Count)
+        $inspectionsCount = RoomInspection::whereBetween('inspection_date', [$startDate, $endDate])->count();
+
+        $laundryReport = LaundryRequest::whereBetween('request_date', [$startDate, $endDate])
+            ->select('status', DB::raw('COUNT(*) as count'), DB::raw('SUM(total_amount) as total'))
+            ->groupBy('status')
+            ->get();
+
+        // 2. Current Room Statuses
+        $totalRooms = Room::count();
+        $roomStatuses = RoomStatus::withCount('rooms')->get();
+
+        return view('hk.reports', compact(
+            'startDate',
+            'endDate',
+            'inspectionsCount',
+            'laundryReport',
+            'totalRooms',
+            'roomStatuses'
         ));
     }
 }

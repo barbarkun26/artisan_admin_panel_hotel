@@ -9,9 +9,9 @@
         <form action="{{ route('reservations.index') }}" method="GET" class="flex flex-col md:flex-row md:items-center justify-between gap-4">
             <div class="flex-1 flex gap-4">
                 <input type="text" name="search" placeholder="Search booking number, guest name, phone..." value="{{ request('search') }}"
-                       class="w-full max-w-md px-4 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-sm focus:outline-none focus:border-amber-500">
+                       class="w-full max-w-md px-4 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-sm focus:outline-none focus:border-indigo-500">
                 
-                <select name="status" class="px-4 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-sm focus:outline-none focus:border-amber-500">
+                <select name="status" class="px-4 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-sm focus:outline-none focus:border-indigo-500">
                     <option value="">All Statuses</option>
                     <option value="pending" {{ request('status') === 'pending' ? 'selected' : '' }}>Pending</option>
                     <option value="checkin" {{ request('status') === 'checkin' ? 'selected' : '' }}>Checked In</option>
@@ -69,13 +69,13 @@
                                     @if($res->status === 'checkin') bg-emerald-500/10 text-emerald-500
                                     @elseif($res->status === 'checkout') bg-slate-500/10 text-slate-400
                                     @elseif($res->status === 'cancelled') bg-red-500/10 text-red-500
-                                    @else bg-amber-500/10 text-amber-500 @endif">
+                                    @else bg-indigo-500/10 text-indigo-500 @endif">
                                     {{ ucfirst($res->status) }}
                                 </span>
                             </td>
                             <td class="py-4 text-xs text-slate-400">{{ $res->created_at->format('M d, Y H:i') }}</td>
                             <td class="py-4 text-right">
-                                <a href="{{ route('reservations.show', $res->id) }}" class="px-3 py-1.5 bg-amber-500 hover:bg-amber-600 text-slate-950 text-xs font-semibold rounded-lg transition-colors">
+                                <a href="{{ route('reservations.show', $res->id) }}" class="px-3 py-1.5 bg-indigo-500 hover:bg-indigo-600 text-slate-950 text-xs font-semibold rounded-lg transition-colors">
                                     Open Folio
                                 </a>
                             </td>

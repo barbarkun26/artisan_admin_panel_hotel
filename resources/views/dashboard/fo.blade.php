@@ -6,7 +6,7 @@
 <div class="space-y-6">
     <!-- Quick Actions -->
     <div class="flex flex-wrap gap-4">
-        <a href="{{ route('reservations.create') }}" class="px-4 py-2.5 bg-amber-500 hover:bg-amber-600 text-slate-950 font-semibold rounded-xl transition-all shadow-sm">
+        <a href="{{ route('reservations.create') }}" class="px-4 py-2.5 bg-indigo-500 hover:bg-indigo-600 text-slate-950 font-semibold rounded-xl transition-all shadow-sm">
             + New Booking
         </a>
         <a href="{{ route('guests.create') }}" class="px-4 py-2.5 bg-white dark:bg-slate-900 hover:bg-slate-100 dark:hover:bg-slate-800 border border-slate-200 dark:border-slate-800 font-semibold rounded-xl transition-all">
@@ -35,7 +35,7 @@
         <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-6 shadow-sm">
             <h3 class="text-xs font-semibold text-slate-400 uppercase tracking-wider">Arrivals Today</h3>
             <p class="text-2xl font-bold text-slate-900 dark:text-white mt-2">{{ $arrivalsCount }} Guests</p>
-            <div class="mt-4 flex items-center text-xs text-amber-500">
+            <div class="mt-4 flex items-center text-xs text-indigo-500">
                 <span>Awaiting Check-in</span>
             </div>
         </div>
@@ -99,12 +99,12 @@
                                         @if($res->status === 'checkin') bg-emerald-500/10 text-emerald-500
                                         @elseif($res->status === 'checkout') bg-slate-500/10 text-slate-400
                                         @elseif($res->status === 'cancelled') bg-red-500/10 text-red-500
-                                        @else bg-amber-500/10 text-amber-500 @endif">
+                                        @else bg-indigo-500/10 text-indigo-500 @endif">
                                         {{ ucfirst($res->status) }}
                                     </span>
                                 </td>
                                 <td class="py-4">
-                                    <a href="{{ route('reservations.show', $res->id) }}" class="text-amber-500 hover:text-amber-600 font-medium">
+                                    <a href="{{ route('reservations.show', $res->id) }}" class="text-indigo-500 hover:text-indigo-600 font-medium">
                                         Open Folio
                                     </a>
                                 </td>
@@ -136,7 +136,7 @@
                     <div class="absolute top-0 left-0 right-0 h-1 
                         @if(in_array($room->status->code, ['V', 'VC'])) bg-emerald-500
                         @elseif(in_array($room->status->code, ['VD', 'OD', 'OOO', 'OOS'])) bg-red-500
-                        @elseif($isOccupied) bg-amber-500
+                        @elseif($isOccupied) bg-indigo-500
                         @else bg-slate-500 @endif"></div>
 
                     <div class="flex justify-between items-start mb-4">
@@ -147,7 +147,7 @@
                         <span class="px-2.5 py-1 rounded text-xs font-bold
                             @if(in_array($room->status->code, ['V', 'VC'])) bg-emerald-50 dark:bg-emerald-500/10 text-emerald-600 dark:text-emerald-400
                             @elseif(in_array($room->status->code, ['VD', 'OD', 'OOO', 'OOS'])) bg-red-50 dark:bg-red-500/10 text-red-600 dark:text-red-400
-                            @elseif($isOccupied) bg-amber-50 dark:bg-amber-500/10 text-amber-600 dark:text-amber-400
+                            @elseif($isOccupied) bg-indigo-50 dark:bg-indigo-500/10 text-indigo-600 dark:text-indigo-400
                             @else bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 @endif">
                             {{ $room->status->name }} ({{ $room->status->code }})
                         </span>
@@ -168,7 +168,7 @@
                     <!-- Add Breakfast Button -->
                     @if($activeReservation && !$room->roomType->breakfast_included)
                         <div class="mt-4 pt-4 border-t border-slate-100 dark:border-slate-800">
-                            <a href="{{ route('fnb.create', ['reservation_id' => $activeReservation->id, 'breakfast' => 1]) }}" class="block w-full py-2 bg-amber-100 dark:bg-amber-500/20 text-amber-700 dark:text-amber-400 hover:bg-amber-200 dark:hover:bg-amber-500/30 text-center text-xs font-bold rounded-lg transition-colors">
+                            <a href="{{ route('fnb.create', ['reservation_id' => $activeReservation->id, 'breakfast' => 1]) }}" class="block w-full py-2 bg-indigo-100 dark:bg-indigo-500/20 text-indigo-700 dark:text-indigo-400 hover:bg-indigo-200 dark:hover:bg-indigo-500/30 text-center text-xs font-bold rounded-lg transition-colors">
                                 + Add Breakfast Package
                             </a>
                         </div>

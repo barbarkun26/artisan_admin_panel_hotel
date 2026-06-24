@@ -34,7 +34,7 @@
             <!-- Brand -->
             <div class="h-16 flex items-center justify-between px-6 border-b border-slate-200 dark:border-slate-800 bg-slate-900 text-white">
                 <div class="flex items-center space-x-2">
-                    <span class="text-xl font-bold tracking-wider">ARTISAN <span class="text-amber-400">HOTEL</span></span>
+                    <span class="text-xl font-bold tracking-wider">ARTISAN <span class="text-indigo-400">HOTEL</span></span>
                 </div>
                 <div class="md:hidden">
                     <button id="mobile-menu-toggle" class="p-1 rounded hover:bg-slate-800">
@@ -54,73 +54,85 @@
 
                     <!-- Administrator Sidebar -->
                     @if(Auth::user()->hasRole('Administrator'))
-                        <a href="{{ route('admin.dashboard') }}" class="flex items-center space-x-3 px-3 py-2 rounded-lg text-sm font-medium hover:bg-slate-100 dark:hover:bg-slate-800 {{ request()->routeIs('admin.dashboard') ? 'bg-amber-500/10 text-amber-500' : '' }}">
+                        <a href="{{ route('admin.dashboard') }}" class="flex items-center space-x-3 px-3 py-2 rounded-lg text-sm font-medium hover:bg-slate-100 dark:hover:bg-slate-800 {{ request()->routeIs('admin.dashboard') ? 'bg-indigo-500/10 text-indigo-500' : '' }}">
                             <span>Dashboard</span>
                         </a>
-                        <a href="{{ route('reservations.index') }}" class="flex items-center space-x-3 px-3 py-2 rounded-lg text-sm font-medium hover:bg-slate-100 dark:hover:bg-slate-800 {{ request()->routeIs('reservations.*') ? 'bg-amber-500/10 text-amber-500' : '' }}">
+                        <a href="{{ route('admin.users.index') }}" class="flex items-center space-x-3 px-3 py-2 rounded-lg text-sm font-medium hover:bg-slate-100 dark:hover:bg-slate-800 {{ request()->routeIs('admin.users.*') ? 'bg-indigo-500/10 text-indigo-500' : '' }}">
+                            <span>User Management</span>
+                        </a>
+                        <a href="{{ route('reservations.index') }}" class="flex items-center space-x-3 px-3 py-2 rounded-lg text-sm font-medium hover:bg-slate-100 dark:hover:bg-slate-800 {{ request()->routeIs('reservations.*') ? 'bg-indigo-500/10 text-indigo-500' : '' }}">
                             <span>Reservations</span>
                         </a>
-                        <a href="{{ route('guests.index') }}" class="flex items-center space-x-3 px-3 py-2 rounded-lg text-sm font-medium hover:bg-slate-100 dark:hover:bg-slate-800 {{ request()->routeIs('guests.*') ? 'bg-amber-500/10 text-amber-500' : '' }}">
+                        <a href="{{ route('guests.index') }}" class="flex items-center space-x-3 px-3 py-2 rounded-lg text-sm font-medium hover:bg-slate-100 dark:hover:bg-slate-800 {{ request()->routeIs('guests.*') ? 'bg-indigo-500/10 text-indigo-500' : '' }}">
                             <span>Guests List</span>
                         </a>
-                        <a href="{{ route('laundry.index') }}" class="flex items-center space-x-3 px-3 py-2 rounded-lg text-sm font-medium hover:bg-slate-100 dark:hover:bg-slate-800 {{ request()->routeIs('laundry.*') ? 'bg-amber-500/10 text-amber-500' : '' }}">
+                        <a href="{{ route('laundry.index') }}" class="flex items-center space-x-3 px-3 py-2 rounded-lg text-sm font-medium hover:bg-slate-100 dark:hover:bg-slate-800 {{ request()->routeIs('laundry.*') ? 'bg-indigo-500/10 text-indigo-500' : '' }}">
                             <span>Laundry Requests</span>
                         </a>
-                        <a href="{{ route('fnb.index') }}" class="flex items-center space-x-3 px-3 py-2 rounded-lg text-sm font-medium hover:bg-slate-100 dark:hover:bg-slate-800 {{ request()->routeIs('fnb.*') ? 'bg-amber-500/10 text-amber-500' : '' }}">
+                        <a href="{{ route('fnb.index') }}" class="flex items-center space-x-3 px-3 py-2 rounded-lg text-sm font-medium hover:bg-slate-100 dark:hover:bg-slate-800 {{ request()->routeIs('fnb.*') ? 'bg-indigo-500/10 text-indigo-500' : '' }}">
                             <span>F&B Orders</span>
                         </a>
-                        <a href="{{ route('inspections.index') }}" class="flex items-center space-x-3 px-3 py-2 rounded-lg text-sm font-medium hover:bg-slate-100 dark:hover:bg-slate-800 {{ request()->routeIs('inspections.*') ? 'bg-amber-500/10 text-amber-500' : '' }}">
+                        <a href="{{ route('inspections.index') }}" class="flex items-center space-x-3 px-3 py-2 rounded-lg text-sm font-medium hover:bg-slate-100 dark:hover:bg-slate-800 {{ request()->routeIs('inspections.*') ? 'bg-indigo-500/10 text-indigo-500' : '' }}">
                             <span>Inspections</span>
                         </a>
-                        <a href="{{ route('admin.reports') }}" class="flex items-center space-x-3 px-3 py-2 rounded-lg text-sm font-medium hover:bg-slate-100 dark:hover:bg-slate-800 {{ request()->routeIs('admin.reports') ? 'bg-amber-500/10 text-amber-500' : '' }}">
+                        <a href="{{ route('admin.reports') }}" class="flex items-center space-x-3 px-3 py-2 rounded-lg text-sm font-medium hover:bg-slate-100 dark:hover:bg-slate-800 {{ request()->routeIs('admin.reports') ? 'bg-indigo-500/10 text-indigo-500' : '' }}">
                             <span>Reports</span>
                         </a>
                     @endif
 
                     <!-- Front Office Sidebar -->
                     @if(Auth::user()->hasRole('Front Office'))
-                        <a href="{{ route('fo.dashboard') }}" class="flex items-center space-x-3 px-3 py-2 rounded-lg text-sm font-medium hover:bg-slate-100 dark:hover:bg-slate-800 {{ request()->routeIs('fo.dashboard') ? 'bg-amber-500/10 text-amber-500' : '' }}">
+                        <a href="{{ route('fo.dashboard') }}" class="flex items-center space-x-3 px-3 py-2 rounded-lg text-sm font-medium hover:bg-slate-100 dark:hover:bg-slate-800 {{ request()->routeIs('fo.dashboard') ? 'bg-indigo-500/10 text-indigo-500' : '' }}">
                             <span>Dashboard</span>
                         </a>
-                        <a href="{{ route('reservations.index') }}" class="flex items-center space-x-3 px-3 py-2 rounded-lg text-sm font-medium hover:bg-slate-100 dark:hover:bg-slate-800 {{ request()->routeIs('reservations.*') ? 'bg-amber-500/10 text-amber-500' : '' }}">
+                        <a href="{{ route('reservations.index') }}" class="flex items-center space-x-3 px-3 py-2 rounded-lg text-sm font-medium hover:bg-slate-100 dark:hover:bg-slate-800 {{ request()->routeIs('reservations.*') ? 'bg-indigo-500/10 text-indigo-500' : '' }}">
                             <span>Reservations</span>
                         </a>
-                        <a href="{{ route('reservations.create') }}" class="flex items-center space-x-3 px-3 py-2 rounded-lg text-sm font-medium hover:bg-slate-100 dark:hover:bg-slate-800 {{ request()->routeIs('reservations.create') ? 'bg-amber-500/10 text-amber-500' : '' }}">
+                        <a href="{{ route('reservations.create') }}" class="flex items-center space-x-3 px-3 py-2 rounded-lg text-sm font-medium hover:bg-slate-100 dark:hover:bg-slate-800 {{ request()->routeIs('reservations.create') ? 'bg-indigo-500/10 text-indigo-500' : '' }}">
                             <span>Create Booking</span>
                         </a>
-                        <a href="{{ route('guests.index') }}" class="flex items-center space-x-3 px-3 py-2 rounded-lg text-sm font-medium hover:bg-slate-100 dark:hover:bg-slate-800 {{ request()->routeIs('guests.*') ? 'bg-amber-500/10 text-amber-500' : '' }}">
+                        <a href="{{ route('guests.index') }}" class="flex items-center space-x-3 px-3 py-2 rounded-lg text-sm font-medium hover:bg-slate-100 dark:hover:bg-slate-800 {{ request()->routeIs('guests.*') ? 'bg-indigo-500/10 text-indigo-500' : '' }}">
                             <span>Guest List</span>
                         </a>
-                        <a href="{{ route('laundry.create') }}" class="flex items-center space-x-3 px-3 py-2 rounded-lg text-sm font-medium hover:bg-slate-100 dark:hover:bg-slate-800 {{ request()->routeIs('laundry.create') ? 'bg-amber-500/10 text-amber-500' : '' }}">
+                        <a href="{{ route('laundry.create') }}" class="flex items-center space-x-3 px-3 py-2 rounded-lg text-sm font-medium hover:bg-slate-100 dark:hover:bg-slate-800 {{ request()->routeIs('laundry.create') ? 'bg-indigo-500/10 text-indigo-500' : '' }}">
                             <span>Request Laundry</span>
                         </a>
-                        <a href="{{ route('fnb.create') }}" class="flex items-center space-x-3 px-3 py-2 rounded-lg text-sm font-medium hover:bg-slate-100 dark:hover:bg-slate-800 {{ request()->routeIs('fnb.create') ? 'bg-amber-500/10 text-amber-500' : '' }}">
+                        <a href="{{ route('fnb.create') }}" class="flex items-center space-x-3 px-3 py-2 rounded-lg text-sm font-medium hover:bg-slate-100 dark:hover:bg-slate-800 {{ request()->routeIs('fnb.create') ? 'bg-indigo-500/10 text-indigo-500' : '' }}">
                             <span>Request F&B</span>
+                        </a>
+                        <a href="{{ route('fo.reports') }}" class="flex items-center space-x-3 px-3 py-2 rounded-lg text-sm font-medium hover:bg-slate-100 dark:hover:bg-slate-800 {{ request()->routeIs('fo.reports') ? 'bg-indigo-500/10 text-indigo-500' : '' }}">
+                            <span>Reports</span>
                         </a>
                     @endif
 
                     <!-- Housekeeping Sidebar -->
                     @if(Auth::user()->hasRole('Housekeeping'))
-                        <a href="{{ route('hk.dashboard') }}" class="flex items-center space-x-3 px-3 py-2 rounded-lg text-sm font-medium hover:bg-slate-100 dark:hover:bg-slate-800 {{ request()->routeIs('hk.dashboard') ? 'bg-amber-500/10 text-amber-500' : '' }}">
+                        <a href="{{ route('hk.dashboard') }}" class="flex items-center space-x-3 px-3 py-2 rounded-lg text-sm font-medium hover:bg-slate-100 dark:hover:bg-slate-800 {{ request()->routeIs('hk.dashboard') ? 'bg-indigo-500/10 text-indigo-500' : '' }}">
                             <span>Dashboard</span>
                         </a>
-                        <a href="{{ route('inspections.index') }}" class="flex items-center space-x-3 px-3 py-2 rounded-lg text-sm font-medium hover:bg-slate-100 dark:hover:bg-slate-800 {{ request()->routeIs('inspections.*') ? 'bg-amber-500/10 text-amber-500' : '' }}">
+                        <a href="{{ route('inspections.index') }}" class="flex items-center space-x-3 px-3 py-2 rounded-lg text-sm font-medium hover:bg-slate-100 dark:hover:bg-slate-800 {{ request()->routeIs('inspections.*') ? 'bg-indigo-500/10 text-indigo-500' : '' }}">
                             <span>Inspection Reports</span>
                         </a>
-                        <a href="{{ route('laundry.index') }}" class="flex items-center space-x-3 px-3 py-2 rounded-lg text-sm font-medium hover:bg-slate-100 dark:hover:bg-slate-800 {{ request()->routeIs('laundry.index') ? 'bg-amber-500/10 text-amber-500' : '' }}">
+                        <a href="{{ route('laundry.index') }}" class="flex items-center space-x-3 px-3 py-2 rounded-lg text-sm font-medium hover:bg-slate-100 dark:hover:bg-slate-800 {{ request()->routeIs('laundry.index') ? 'bg-indigo-500/10 text-indigo-500' : '' }}">
                             <span>Laundry requests</span>
+                        </a>
+                        <a href="{{ route('hk.reports') }}" class="flex items-center space-x-3 px-3 py-2 rounded-lg text-sm font-medium hover:bg-slate-100 dark:hover:bg-slate-800 {{ request()->routeIs('hk.reports') ? 'bg-indigo-500/10 text-indigo-500' : '' }}">
+                            <span>Reports</span>
                         </a>
                     @endif
 
                     <!-- F&B Sidebar -->
                     @if(Auth::user()->hasRole('Food & Beverage'))
-                        <a href="{{ route('fnb.dashboard') }}" class="flex items-center space-x-3 px-3 py-2 rounded-lg text-sm font-medium hover:bg-slate-100 dark:hover:bg-slate-800 {{ request()->routeIs('fnb.dashboard') ? 'bg-amber-500/10 text-amber-500' : '' }}">
+                        <a href="{{ route('fnb.dashboard') }}" class="flex items-center space-x-3 px-3 py-2 rounded-lg text-sm font-medium hover:bg-slate-100 dark:hover:bg-slate-800 {{ request()->routeIs('fnb.dashboard') ? 'bg-indigo-500/10 text-indigo-500' : '' }}">
                             <span>Dashboard</span>
                         </a>
-                        <a href="{{ route('fnb.index') }}" class="flex items-center space-x-3 px-3 py-2 rounded-lg text-sm font-medium hover:bg-slate-100 dark:hover:bg-slate-800 {{ request()->routeIs('fnb.index') ? 'bg-amber-500/10 text-amber-500' : '' }}">
+                        <a href="{{ route('fnb.index') }}" class="flex items-center space-x-3 px-3 py-2 rounded-lg text-sm font-medium hover:bg-slate-100 dark:hover:bg-slate-800 {{ request()->routeIs('fnb.index') ? 'bg-indigo-500/10 text-indigo-500' : '' }}">
                             <span>F&B Orders</span>
                         </a>
-                        <a href="{{ route('fnb.reports') }}" class="flex items-center space-x-3 px-3 py-2 rounded-lg text-sm font-medium hover:bg-slate-100 dark:hover:bg-slate-800 {{ request()->routeIs('fnb.reports') ? 'bg-amber-500/10 text-amber-500' : '' }}">
+                        <a href="{{ route('fnb.menus.index') }}" class="flex items-center space-x-3 px-3 py-2 rounded-lg text-sm font-medium hover:bg-slate-100 dark:hover:bg-slate-800 {{ request()->routeIs('fnb.menus.*') ? 'bg-indigo-500/10 text-indigo-500' : '' }}">
+                            <span>Menu Management</span>
+                        </a>
+                        <a href="{{ route('fnb.reports') }}" class="flex items-center space-x-3 px-3 py-2 rounded-lg text-sm font-medium hover:bg-slate-100 dark:hover:bg-slate-800 {{ request()->routeIs('fnb.reports') ? 'bg-indigo-500/10 text-indigo-500' : '' }}">
                             <span>Reports</span>
                         </a>
                     @endif
@@ -140,7 +152,7 @@
                     <!-- Theme Toggle -->
                     <button id="theme-toggle" class="p-2 rounded-full hover:bg-slate-100 dark:hover:bg-slate-800 focus:outline-none" aria-label="Toggle Night Mode">
                         <!-- Sun Icon (shown in dark mode) -->
-                        <svg id="theme-toggle-light-icon" class="hidden h-5 w-5 text-amber-400" fill="currentColor" viewBox="0 0 20 20">
+                        <svg id="theme-toggle-light-icon" class="hidden h-5 w-5 text-indigo-400" fill="currentColor" viewBox="0 0 20 20">
                             <path d="M10 2a1 1 0 011 1v1a1 1 0 11-2 0V3a1 1 0 011-1zm4 8a4 4 0 11-8 0 4 4 0 018 0zm-.464 4.95l.707.707a1 1 0 001.414-1.414l-.707-.707a1 1 0 00-1.414 1.414zm2.12-10.607a1 1 0 010 1.414l-.706.707a1 1 0 11-1.414-1.414l.707-.707a1 1 0 011.414 0zM17 11a1 1 0 100-2h-1a1 1 0 100 2h1zm-7 4a1 1 0 011 1v1a1 1 0 11-2 0v-1a1 1 0 011-1zM5.05 6.464A1 1 0 106.46 5.05L5.75 4.34a1 1 0 10-1.41 1.42l.71.71zm-.707 7.071a1 1 0 001.414 1.414l.707-.707a1 1 0 00-1.414-1.414l-.707.707zM3 9a1 1 0 000 2h1a1 1 0 100-2h-1z" />
                         </svg>
                         <!-- Moon Icon (shown in light mode) -->

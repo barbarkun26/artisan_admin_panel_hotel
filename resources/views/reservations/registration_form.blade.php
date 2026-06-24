@@ -36,7 +36,7 @@
 <body class="bg-white p-8">
     <div class="no-print max-w-4xl mx-auto mb-8 bg-slate-100 p-4 rounded-xl flex justify-between items-center">
         <span class="text-sm font-medium text-slate-600">Print Preview Mode - Registration Form</span>
-        <button onclick="window.print()" class="px-4 py-2 bg-amber-500 hover:bg-amber-600 text-slate-950 font-bold rounded-lg text-xs transition-colors">
+        <button onclick="window.print()" class="px-4 py-2 bg-indigo-500 hover:bg-indigo-600 text-slate-950 font-bold rounded-lg text-xs transition-colors">
             Print
         </button>
     </div>

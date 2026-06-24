@@ -37,7 +37,7 @@
                             <td class="py-4 text-right font-bold text-slate-900 dark:text-white">Rp {{ number_format($ord->total_amount) }}</td>
                             <td class="py-4 text-center">
                                 <span class="px-2.5 py-1 rounded-full text-xs font-semibold 
-                                    @if($ord->status === 'pending') bg-amber-500/10 text-amber-500
+                                    @if($ord->status === 'pending') bg-indigo-500/10 text-indigo-500
                                     @elseif(in_array($ord->status, ['process', 'processing'])) bg-sky-500/10 text-sky-500
                                     @elseif($ord->status === 'waiting') bg-purple-500/10 text-purple-500
                                     @else bg-emerald-500/10 text-emerald-500 @endif">

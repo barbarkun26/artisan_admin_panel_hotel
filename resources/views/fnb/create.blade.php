@@ -10,7 +10,7 @@
         <!-- Room context selection -->
         <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-6 shadow-sm">
             <label class="block text-xs text-slate-400 mb-1 uppercase tracking-wider">Select Occupied Room</label>
-            <select name="reservation_id" required class="w-full px-4 py-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-sm focus:outline-none focus:border-amber-500">
+            <select name="reservation_id" required class="w-full px-4 py-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-sm focus:outline-none focus:border-indigo-500">
                 <option value="">-- Choose room --</option>
                 @foreach($reservations as $res)
                     @foreach($res->reservationRooms as $resRoom)
@@ -26,14 +26,14 @@
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div>
                     <label class="block text-xs text-slate-400 mb-1 uppercase tracking-wider">Payment Type</label>
-                    <select name="payment_type" required class="w-full px-4 py-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-sm focus:outline-none focus:border-amber-500">
+                    <select name="payment_type" required class="w-full px-4 py-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-sm focus:outline-none focus:border-indigo-500">
                         <option value="billed_to_room">Bill to Room (Pay at Checkout)</option>
                         <option value="on_the_spot">Pay On The Spot (Direct Payment)</option>
                     </select>
                 </div>
                 <div>
                     <label class="block text-xs text-slate-400 mb-1 uppercase tracking-wider">Payment Method (if On The Spot)</label>
-                    <select name="payment_method" class="w-full px-4 py-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-sm focus:outline-none focus:border-amber-500">
+                    <select name="payment_method" class="w-full px-4 py-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-sm focus:outline-none focus:border-indigo-500">
                         <option value="">-- Select Method --</option>
                         <option value="Cash">Cash</option>
                         <option value="Transfer Bank">Transfer Bank</option>
@@ -51,7 +51,7 @@
             <div class="space-y-8">
                 @foreach($categories as $category)
                     <div>
-                        <h4 class="font-bold text-base text-amber-500 border-b border-slate-100 dark:border-slate-800 pb-2 mb-4">
+                        <h4 class="font-bold text-base text-indigo-500 border-b border-slate-100 dark:border-slate-800 pb-2 mb-4">
                             {{ $category->name }}
                         </h4>
                         
@@ -62,7 +62,7 @@
                                     <div class="flex-1 pr-4">
                                         <span class="block font-semibold text-slate-900 dark:text-white">{{ $menu->name }}</span>
                                         <span class="block text-xs text-slate-400 mt-1">{{ $menu->description ?? 'No description.' }}</span>
-                                        <span class="block text-xs font-bold text-amber-500 mt-1">Rp {{ number_format($menu->price) }}</span>
+                                        <span class="block text-xs font-bold text-indigo-500 mt-1">Rp {{ number_format($menu->price) }}</span>
                                     </div>
                                     <div class="w-20 shrink-0">
                                         <label class="block text-[10px] text-slate-400 mb-0.5 text-center">QTY</label>
@@ -83,7 +83,7 @@
             <a href="{{ route('fnb.index') }}" class="px-4 py-2 bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 font-semibold rounded-xl text-sm hover:bg-slate-200 dark:hover:bg-slate-700">
                 Cancel
             </a>
-            <button type="submit" class="px-4 py-2 bg-amber-500 hover:bg-amber-600 text-slate-950 font-bold rounded-xl text-sm shadow-sm">
+            <button type="submit" class="px-4 py-2 bg-indigo-500 hover:bg-indigo-600 text-slate-950 font-bold rounded-xl text-sm shadow-sm">
                 Place Room Service Order
             </button>
         </div>

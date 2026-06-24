@@ -55,7 +55,7 @@
                         <span class="font-medium">Rp {{ number_format($roomRevenue) }}</span>
                     </div>
                     <div class="w-full bg-slate-100 dark:bg-slate-800 rounded-full h-2">
-                        <div class="bg-amber-500 h-2 rounded-full" style="width: {{ $totalRevenue > 0 ? ($roomRevenue / $totalRevenue) * 100 : 0 }}%"></div>
+                        <div class="bg-indigo-500 h-2 rounded-full" style="width: {{ $totalRevenue > 0 ? ($roomRevenue / $totalRevenue) * 100 : 0 }}%"></div>
                     </div>
                 </div>
 
@@ -102,7 +102,7 @@
                                 <span class="absolute top-4 left-4 -ml-px h-full w-0.5 bg-slate-200 dark:bg-slate-800" aria-hidden="true"></span>
                                 <div class="relative flex space-x-3">
                                     <div>
-                                        <span class="h-8 w-8 rounded-full bg-amber-500/10 flex items-center justify-center text-amber-500 font-semibold text-xs">
+                                        <span class="h-8 w-8 rounded-full bg-indigo-500/10 flex items-center justify-center text-indigo-500 font-semibold text-xs">
                                             {{ substr($log->module, 0, 2) }}
                                         </span>
                                     </div>

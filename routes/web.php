@@ -9,6 +9,8 @@ use App\Http\Controllers\LaundryController;
 use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\ReportController;
 use App\Http\Controllers\ReservationController;
+use App\Http\Controllers\UserController;
+use App\Http\Controllers\FnbMenuController;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 
@@ -40,6 +42,7 @@ Route::middleware(['auth'])->group(function () {
     Route::middleware(['role:Administrator'])->group(function () {
         Route::get('/admin/dashboard', [DashboardController::class, 'adminDashboard'])->name('admin.dashboard');
         Route::get('/admin/reports', [ReportController::class, 'index'])->name('admin.reports');
+        Route::get('/admin/users', [UserController::class, 'index'])->name('admin.users.index');
     });
 
     // Front Office Routes (and Admin helper)
@@ -66,6 +69,9 @@ Route::middleware(['auth'])->group(function () {
         Route::post('/laundry', [LaundryController::class, 'store'])->name('laundry.store');
         Route::get('/fnb/create', [FnbController::class, 'create'])->name('fnb.create');
         Route::post('/fnb', [FnbController::class, 'store'])->name('fnb.store');
+
+        // Reports
+        Route::get('/fo/reports', [ReportController::class, 'foReports'])->name('fo.reports');
     });
 
     // Housekeeping Routes (and Admin helper)
@@ -81,6 +87,9 @@ Route::middleware(['auth'])->group(function () {
         // Laundry Management
         Route::get('/laundry', [LaundryController::class, 'index'])->name('laundry.index');
         Route::post('/laundry/{laundryRequest}/status', [LaundryController::class, 'updateStatus'])->name('laundry.status');
+
+        // Reports
+        Route::get('/hk/reports', [ReportController::class, 'hkReports'])->name('hk.reports');
     });
 
     // F&B Routes (and Admin helper)
@@ -89,5 +98,6 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/fnb', [FnbController::class, 'index'])->name('fnb.index');
         Route::post('/fnb/{fnbOrder}/status', [FnbController::class, 'updateStatus'])->name('fnb.status');
         Route::get('/fnb/reports', [FnbController::class, 'reports'])->name('fnb.reports');
+        Route::resource('fnb/menus', FnbMenuController::class)->names('fnb.menus');
     });
 });

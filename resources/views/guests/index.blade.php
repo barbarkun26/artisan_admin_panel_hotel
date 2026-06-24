@@ -8,13 +8,13 @@
     <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <form action="{{ route('guests.index') }}" method="GET" class="flex-1 flex gap-4">
             <input type="text" name="search" placeholder="Search by name, guest code, phone..." value="{{ request('search') }}"
-                   class="w-full max-w-md px-4 py-2 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl text-sm focus:outline-none focus:border-amber-500">
+                   class="w-full max-w-md px-4 py-2 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl text-sm focus:outline-none focus:border-indigo-500">
             <button type="submit" class="px-4 py-2 bg-slate-900 dark:bg-slate-700 text-white rounded-xl text-sm font-semibold hover:bg-slate-800">
                 Search
             </button>
         </form>
         
-        <a href="{{ route('guests.create') }}" class="px-4 py-2 bg-amber-500 hover:bg-amber-600 text-slate-950 font-bold rounded-xl text-sm shadow-sm">
+        <a href="{{ route('guests.create') }}" class="px-4 py-2 bg-indigo-500 hover:bg-indigo-600 text-slate-950 font-bold rounded-xl text-sm shadow-sm">
             + Register Guest
         </a>
     </div>
@@ -45,7 +45,7 @@
                             <td class="py-4">{{ $guest->phone }}</td>
                             <td class="py-4 text-xs">{{ $guest->email ?? 'N/A' }}</td>
                             <td class="py-4 text-right">
-                                <a href="{{ route('guests.edit', $guest->id) }}" class="text-amber-500 hover:text-amber-600 font-medium">
+                                <a href="{{ route('guests.edit', $guest->id) }}" class="text-indigo-500 hover:text-indigo-600 font-medium">
                                     Edit Profile
                                 </a>
                             </td>

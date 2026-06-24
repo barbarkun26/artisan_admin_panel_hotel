@@ -39,7 +39,7 @@
                                 <p class="text-xs text-slate-400">Guest: {{ $order->reservation->guest->name }}</p>
                             </div>
                             <span class="px-2.5 py-1 rounded-full text-xs font-semibold 
-                                @if($order->status === 'pending') bg-amber-500/10 text-amber-500
+                                @if($order->status === 'pending') bg-indigo-500/10 text-indigo-500
                                 @elseif(in_array($order->status, ['process', 'processing'])) bg-sky-500/10 text-sky-500
                                 @elseif($order->status === 'waiting') bg-purple-500/10 text-purple-500
                                 @else bg-emerald-500/10 text-emerald-500 @endif">

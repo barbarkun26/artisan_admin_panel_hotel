@@ -52,7 +52,7 @@
             </div>
 
             <button type="submit"
-                    class="w-full py-3 bg-white hover:bg-red-400 text-slate-950 font-semibold rounded-xl shadow-lg shadow-amber-500/20 transition-all hover:-translate-y-0.5">
+                    class="w-full py-3 bg-white hover:bg-red-400 text-slate-950 font-semibold rounded-xl shadow-lg shadow-indigo-500/20 transition-all hover:-translate-y-0.5">
                 Sign In to System
             </button>
         </form>

@@ -11,12 +11,12 @@
             <div>
                 <label class="block text-xs text-slate-400 mb-1 uppercase tracking-wider">Check-in Date</label>
                 <input type="date" name="checkin" value="{{ $checkin }}" min="{{ date('Y-m-d') }}"
-                       class="w-full px-4 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-sm focus:outline-none focus:border-amber-500">
+                       class="w-full px-4 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-sm focus:outline-none focus:border-indigo-500">
             </div>
             <div>
                 <label class="block text-xs text-slate-400 mb-1 uppercase tracking-wider">Check-out Date</label>
                 <input type="date" name="checkout" value="{{ $checkout }}" min="{{ date('Y-m-d', strtotime('+1 day')) }}"
-                       class="w-full px-4 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-sm focus:outline-none focus:border-amber-500">
+                       class="w-full px-4 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-sm focus:outline-none focus:border-indigo-500">
             </div>
             <div>
                 <button type="submit" class="w-full px-4 py-2 bg-slate-900 dark:bg-slate-700 text-white font-semibold rounded-xl text-sm hover:bg-slate-800 transition-colors">
@@ -37,7 +37,7 @@
             <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-6 shadow-sm">
                 <div class="flex justify-between items-center mb-4">
                     <h3 class="text-sm font-semibold text-slate-400 uppercase tracking-wider">Allocate Guest</h3>
-                    <a href="{{ route('guests.create') }}" class="text-xs text-amber-500 hover:underline">
+                    <a href="{{ route('guests.create') }}" class="text-xs text-indigo-500 hover:underline">
                         + Register New Guest
                     </a>
                 </div>
@@ -45,7 +45,7 @@
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div>
                         <label class="block text-xs text-slate-400 mb-1 uppercase tracking-wider">Select Guest</label>
-                        <select name="guest_id" required class="w-full px-4 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-sm focus:outline-none focus:border-amber-500">
+                        <select name="guest_id" required class="w-full px-4 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-sm focus:outline-none focus:border-indigo-500">
                             <option value="">-- Choose guest --</option>
                             @foreach($guests as $guest)
                                 <option value="{{ $guest->id }}">{{ $guest->name }} ({{ $guest->guest_code }} - {{ $guest->phone }})</option>
@@ -56,7 +56,7 @@
                     <div>
                         <label class="block text-xs text-slate-400 mb-1 uppercase tracking-wider">Total Guests Count</label>
                         <input type="number" name="total_guest" required min="1" value="1"
-                               class="w-full px-4 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-sm focus:outline-none focus:border-amber-500">
+                               class="w-full px-4 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-sm focus:outline-none focus:border-indigo-500">
                     </div>
                 </div>
             </div>
@@ -69,14 +69,14 @@
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                         @foreach($rooms as $room)
                             <label class="border border-slate-200 dark:border-slate-800 rounded-xl p-4 flex items-start space-x-3 cursor-pointer hover:bg-slate-50 dark:hover:bg-slate-800/40 transition-colors">
-                                <input type="radio" name="room_id" required value="{{ $room->id }}" class="mt-1 text-amber-500 focus:ring-amber-500">
+                                <input type="radio" name="room_id" required value="{{ $room->id }}" class="mt-1 text-indigo-500 focus:ring-indigo-500">
                                 <div class="flex-1">
                                     <div class="flex justify-between items-start">
                                         <div>
                                             <span class="block font-bold text-slate-900 dark:text-white text-base">Room {{ $room->room_number }}</span>
                                             <span class="block text-xs text-slate-400">{{ $room->roomType->name }}</span>
                                         </div>
-                                        <span class="font-bold text-amber-500 text-sm">Rp {{ number_format($room->roomType->base_price) }}/night</span>
+                                        <span class="font-bold text-indigo-500 text-sm">Rp {{ number_format($room->roomType->base_price) }}/night</span>
                                     </div>
                                     <div class="mt-2 text-xs text-slate-500 border-t border-slate-100 dark:border-slate-800 pt-2">
                                         <span class="block"><strong>Capacity:</strong> {{ $room->roomType->capacity }} Persons</span>
@@ -107,7 +107,7 @@
                     </div>
                     <div class="w-32">
                         <label class="block text-xs text-slate-400 mb-1 uppercase tracking-wider">Quantity</label>
-                        <select name="extra_bed_qty" class="w-full px-4 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-sm focus:outline-none focus:border-amber-500">
+                        <select name="extra_bed_qty" class="w-full px-4 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-sm focus:outline-none focus:border-indigo-500">
                             <option value="0">None</option>
                             <option value="1">1 Bed</option>
                             <option value="2">2 Beds</option>
@@ -118,7 +118,7 @@
 
             <!-- Submit Booking -->
             <div class="flex justify-end">
-                <button type="submit" class="px-6 py-3 bg-amber-500 hover:bg-amber-600 text-slate-950 font-semibold rounded-xl shadow-lg shadow-amber-500/20 transition-all">
+                <button type="submit" class="px-6 py-3 bg-indigo-500 hover:bg-indigo-600 text-slate-950 font-semibold rounded-xl shadow-lg shadow-indigo-500/20 transition-all">
                     Create Reservation
                 </button>
             </div>

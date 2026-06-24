@@ -34,7 +34,7 @@
                         @if($reservation->status === 'checkin') bg-emerald-500/10 text-emerald-500
                         @elseif($reservation->status === 'checkout') bg-slate-500/10 text-slate-400
                         @elseif($reservation->status === 'cancelled') bg-red-500/10 text-red-500
-                        @else bg-amber-500/10 text-amber-500 @endif">
+                        @else bg-indigo-500/10 text-indigo-500 @endif">
                         {{ ucfirst($reservation->status) }}
                     </span>
                 </p>
@@ -84,7 +84,7 @@
                     </a>
                 @endif
                 <a href="{{ route('reservations.registration-form', $reservation->id) }}" target="_blank"
-                   class="w-full py-2 bg-amber-500 hover:bg-amber-600 text-slate-950 font-bold text-xs rounded-xl text-center transition-colors shadow-sm">
+                   class="w-full py-2 bg-indigo-500 hover:bg-indigo-600 text-slate-950 font-bold text-xs rounded-xl text-center transition-colors shadow-sm">
                     Print Registration Form
                 </a>
             </div>
@@ -186,14 +186,14 @@
                             </div>
                             <form action="{{ route('reservations.request-inspection', $reservation->id) }}" method="POST" class="flex justify-end">
                                 @csrf
-                                <button type="submit" class="px-4 py-2 bg-amber-500 hover:bg-amber-600 text-slate-950 font-bold rounded-xl text-xs">
+                                <button type="submit" class="px-4 py-2 bg-indigo-500 hover:bg-indigo-600 text-slate-950 font-bold rounded-xl text-xs">
                                     Request HK Inspection
                                 </button>
                             </form>
                         </div>
                     @elseif($reservation->inspection_status === 'requested')
                         <div class="p-4 bg-slate-50 dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700 space-y-3">
-                            <div class="p-3 bg-amber-500/10 border border-amber-500/20 text-amber-600 dark:text-amber-400 rounded-xl text-xs">
+                            <div class="p-3 bg-indigo-500/10 border border-indigo-500/20 text-indigo-600 dark:text-indigo-400 rounded-xl text-xs">
                                 <strong>Inspection Requested:</strong> Waiting for Housekeeping to complete the inspection. Please refresh this page once done.
                             </div>
                             <div class="flex justify-end">

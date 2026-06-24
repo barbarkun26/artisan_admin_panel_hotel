@@ -36,14 +36,22 @@ class LaundryController extends Controller
     /**
      * Show create laundry request form.
      */
-    public function create(): View
+    public function create(Request $request): View
     {
         // Only checked-in reservations can request laundry
         $reservations = Reservation::where('status', 'checkin')
             ->with('guest', 'reservationRooms.room')
             ->get();
 
-        return view('laundry.create', compact('reservations'));
+        $query = LaundryRequest::with('reservation.guest', 'room', 'items');
+
+        if ($request->filled('status')) {
+            $query->where('status', $request->status);
+        }
+
+        $requests = $query->orderBy('id', 'desc')->paginate(15);
+
+        return view('laundry.create', compact('reservations', 'requests'));
     }
 
     /**

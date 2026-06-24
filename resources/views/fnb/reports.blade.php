@@ -10,12 +10,12 @@
             <div>
                 <label class="block text-xs font-semibold text-slate-400 mb-1 uppercase tracking-wider">Start Date</label>
                 <input type="date" name="start_date" value="{{ $startDate->format('Y-m-d') }}"
-                       class="w-full px-4 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-sm focus:outline-none focus:border-amber-500">
+                       class="w-full px-4 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-sm focus:outline-none focus:border-indigo-500">
             </div>
             <div>
                 <label class="block text-xs font-semibold text-slate-400 mb-1 uppercase tracking-wider">End Date</label>
                 <input type="date" name="end_date" value="{{ $endDate->format('Y-m-d') }}"
-                       class="w-full px-4 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-sm focus:outline-none focus:border-amber-500">
+                       class="w-full px-4 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-sm focus:outline-none focus:border-indigo-500">
             </div>
             <div>
                 <button type="submit" class="w-full px-4 py-2 bg-slate-900 dark:bg-slate-700 text-white font-bold rounded-xl text-sm hover:bg-slate-800 transition-colors">
@@ -34,7 +34,7 @@
                 <p class="text-3xl font-extrabold text-slate-900 dark:text-white mt-2">{{ $totalOrders }}</p>
                 <span class="text-xs text-slate-400 block mt-1">Orders placed in selected range</span>
             </div>
-            <div class="p-3 bg-amber-500/10 text-amber-500 rounded-xl">
+            <div class="p-3 bg-indigo-500/10 text-indigo-500 rounded-xl">
                 <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
                 </svg>
@@ -44,8 +44,8 @@
         <!-- Metric 2: Total Revenue -->
         <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-6 shadow-sm flex items-center justify-between">
             <div>
-                <h3 class="text-xs font-semibold text-slate-400 uppercase tracking-wider font-bold text-amber-500">Delivered Revenue</h3>
-                <p class="text-3xl font-extrabold text-amber-500 mt-2">Rp {{ number_format($revenue, 2) }}</p>
+                <h3 class="text-xs font-semibold text-slate-400 uppercase tracking-wider font-bold text-indigo-500">Delivered Revenue</h3>
+                <p class="text-3xl font-extrabold text-indigo-500 mt-2">Rp {{ number_format($revenue, 2) }}</p>
                 <span class="text-xs text-slate-400 block mt-1">Excludes pending or in-process orders</span>
             </div>
             <div class="p-3 bg-emerald-500/10 text-emerald-500 rounded-xl">
@@ -78,7 +78,7 @@
             <div class="space-y-4">
                 @php
                     $statuses = [
-                        'pending' => ['name' => 'Pending', 'color' => 'bg-amber-500'],
+                        'pending' => ['name' => 'Pending', 'color' => 'bg-indigo-500'],
                         'process' => ['name' => 'Cooking (Process)', 'color' => 'bg-sky-500'],
                         'processing' => ['name' => 'Processing (Legacy)', 'color' => 'bg-slate-400'],
                         'waiting' => ['name' => 'Waiting Delivery', 'color' => 'bg-purple-500'],
@@ -172,7 +172,7 @@
                             <td class="py-4 text-right font-bold text-slate-900 dark:text-white">Rp {{ number_format($ord->total_amount) }}</td>
                             <td class="py-4 text-center">
                                 <span class="px-2.5 py-1 rounded-full text-xs font-semibold 
-                                    @if($ord->status === 'pending') bg-amber-500/10 text-amber-500
+                                    @if($ord->status === 'pending') bg-indigo-500/10 text-indigo-500
                                     @elseif(in_array($ord->status, ['process', 'processing'])) bg-sky-500/10 text-sky-500
                                     @elseif($ord->status === 'waiting') bg-purple-500/10 text-purple-500
                                     @else bg-emerald-500/10 text-emerald-500 @endif">
