@@ -42,7 +42,7 @@ Route::middleware(['auth', 'prevent-back'])->group(function () {
     Route::middleware(['role:Administrator'])->group(function () {
         Route::get('/admin/dashboard', [DashboardController::class, 'adminDashboard'])->name('admin.dashboard');
         Route::get('/admin/reports', [ReportController::class, 'index'])->name('admin.reports');
-        Route::get('/admin/users', [UserController::class, 'index'])->name('admin.users.index');
+        Route::resource('/admin/users', UserController::class)->except(['show'])->names('admin.users');
     });
 
     // Front Office Routes (and Admin helper)

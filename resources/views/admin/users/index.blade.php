@@ -3,6 +3,16 @@
 @section('header_title', 'User Management')
 
 @section('content')
+    <div class="mb-6 flex justify-between items-center">
+        <div>
+            <h2 class="text-xl font-bold text-slate-900 dark:text-slate-100">User Management</h2>
+            <p class="text-slate-500 dark:text-slate-400 text-sm mt-1">Manage system accounts, assign roles, and check online status.</p>
+        </div>
+        <a href="{{ route('admin.users.create') }}" class="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg text-sm font-medium transition-colors shadow-sm shadow-indigo-200 dark:shadow-none">
+            + Add New User
+        </a>
+    </div>
+
     <div class="mb-6 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
         @foreach($roleCounts as $roleCount)
             <div class="bg-white dark:bg-slate-900 rounded-xl shadow-sm border border-slate-200 dark:border-slate-800 p-4 flex items-center justify-between">
@@ -27,8 +37,10 @@
                     <tr class="bg-slate-50 dark:bg-slate-950/50 text-slate-500 dark:text-slate-400 text-xs uppercase tracking-wider">
                         <th class="px-6 py-4 font-medium">Name</th>
                         <th class="px-6 py-4 font-medium">Role</th>
+                        <th class="px-6 py-4 font-medium">Phone</th>
                         <th class="px-6 py-4 font-medium">Status</th>
                         <th class="px-6 py-4 font-medium">Last Seen</th>
+                        <th class="px-6 py-4 font-medium text-right">Actions</th>
                     </tr>
                 </thead>
                 <tbody class="divide-y divide-slate-200 dark:divide-slate-800">
@@ -40,26 +52,48 @@
                             </td>
                             <td class="px-6 py-4">
                                 @foreach($user->roles as $role)
-                                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-slate-100 text-slate-800 dark:bg-slate-800 dark:text-slate-300">
+                                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-indigo-100 text-indigo-800 dark:bg-indigo-500/10 dark:text-indigo-400 border border-indigo-200 dark:border-indigo-500/20">
                                         {{ $role->name }}
                                     </span>
                                 @endforeach
                             </td>
+                            <td class="px-6 py-4 text-sm text-slate-600 dark:text-slate-300">
+                                {{ $user->phone ?? '-' }}
+                            </td>
                             <td class="px-6 py-4">
-                                @if($user->is_online)
-                                    <span class="inline-flex items-center space-x-1 text-emerald-600 dark:text-emerald-400 text-sm font-medium">
-                                        <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
-                                        <span>Online</span>
+                                @if($user->status === 'active')
+                                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-emerald-100 text-emerald-800 dark:bg-emerald-500/10 dark:text-emerald-400 border border-emerald-200 dark:border-emerald-500/20">
+                                        Active
                                     </span>
                                 @else
-                                    <span class="inline-flex items-center space-x-1 text-slate-400 text-sm font-medium">
-                                        <span class="w-2 h-2 rounded-full bg-slate-400"></span>
-                                        <span>Offline</span>
+                                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-slate-100 text-slate-800 dark:bg-slate-800 dark:text-slate-400 border border-slate-200 dark:border-slate-700">
+                                        Inactive
                                     </span>
                                 @endif
                             </td>
-                            <td class="px-6 py-4 text-sm text-slate-500">
-                                {{ $user->last_seen }}
+                            <td class="px-6 py-4 text-sm">
+                                @if($user->is_online)
+                                    <span class="inline-flex items-center space-x-1 text-emerald-600 dark:text-emerald-400 font-medium">
+                                        <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+                                        <span>Online ({{ $user->last_seen }})</span>
+                                    </span>
+                                @else
+                                    <span class="inline-flex items-center space-x-1 text-slate-400 font-medium">
+                                        <span class="w-2 h-2 rounded-full bg-slate-400"></span>
+                                        <span>{{ $user->last_seen }}</span>
+                                    </span>
+                                @endif
+                            </td>
+                            <td class="px-6 py-4 text-right space-x-2">
+                                <a href="{{ route('admin.users.edit', $user) }}" class="text-sm text-indigo-600 dark:text-indigo-400 hover:text-indigo-900 dark:hover:text-indigo-300 font-medium">Edit</a>
+                                
+                                @if($user->id !== Auth::id())
+                                    <form action="{{ route('admin.users.destroy', $user) }}" method="POST" class="inline-block" onsubmit="return confirm('Are you sure you want to delete this user?');">
+                                        @csrf
+                                        @method('DELETE')
+                                        <button type="submit" class="text-sm text-red-600 dark:text-red-400 hover:text-red-900 dark:hover:text-red-300 font-medium">Delete</button>
+                                    </form>
+                                @endif
                             </td>
                         </tr>
                     @endforeach

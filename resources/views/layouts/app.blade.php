@@ -69,8 +69,11 @@
                         <a href="{{ route('laundry.index') }}" class="flex items-center space-x-3 px-3 py-2 rounded-lg text-sm font-medium hover:bg-slate-100 dark:hover:bg-slate-800 {{ request()->routeIs('laundry.*') ? 'bg-indigo-500/10 text-indigo-500' : '' }}">
                             <span>Laundry Requests</span>
                         </a>
-                        <a href="{{ route('fnb.index') }}" class="flex items-center space-x-3 px-3 py-2 rounded-lg text-sm font-medium hover:bg-slate-100 dark:hover:bg-slate-800 {{ request()->routeIs('fnb.*') ? 'bg-indigo-500/10 text-indigo-500' : '' }}">
+                        <a href="{{ route('fnb.index') }}" class="flex items-center space-x-3 px-3 py-2 rounded-lg text-sm font-medium hover:bg-slate-100 dark:hover:bg-slate-800 {{ request()->routeIs('fnb.*') && !request()->routeIs('fnb.menus.*') ? 'bg-indigo-500/10 text-indigo-500' : '' }}">
                             <span>F&B Orders</span>
+                        </a>
+                        <a href="{{ route('fnb.menus.index') }}" class="flex items-center space-x-3 px-3 py-2 rounded-lg text-sm font-medium hover:bg-slate-100 dark:hover:bg-slate-800 {{ request()->routeIs('fnb.menus.*') ? 'bg-indigo-500/10 text-indigo-500' : '' }}">
+                            <span>Menu Management</span>
                         </a>
                         <a href="{{ route('inspections.index') }}" class="flex items-center space-x-3 px-3 py-2 rounded-lg text-sm font-medium hover:bg-slate-100 dark:hover:bg-slate-800 {{ request()->routeIs('inspections.*') ? 'bg-indigo-500/10 text-indigo-500' : '' }}">
                             <span>Inspections</span>
