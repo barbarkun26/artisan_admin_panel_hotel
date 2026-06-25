@@ -20,7 +20,7 @@ Route::post('/login', [AuthController::class, 'login'])->name('login.process');
 Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 
 // Authenticated Routes
-Route::middleware(['auth'])->group(function () {
+Route::middleware(['auth', 'prevent-back'])->group(function () {
 
     // Root Redirector based on User Role
     Route::get('/', function () {
